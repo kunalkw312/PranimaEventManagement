@@ -1,5 +1,4 @@
-
-const CACHE_NAME = 'pranima-v4-ui-cleanup';
+const CACHE_NAME = 'pranima-v5-bw-minimal';
 
 const ASSETS = [
   './',
