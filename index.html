@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   <style>
     :root { --primary: #111; --secondary: #666; --bg-color: #f4f6f8; --card-bg: #ffffff; }
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--primary); padding-bottom: 60px; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--primary); padding-bottom: 80px; }
     h1, h2, h3, h4 { font-weight: 700; color: var(--primary); }
     .brand-font { font-family: 'Playfair Display', serif; letter-spacing: 1px; }
     .main-container { max-width: 950px; margin: 40px auto; background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); padding: 40px; }
@@ -22,104 +22,119 @@
     .event-block { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 25px; margin-bottom: 25px; position: relative; }
     .delete-event-btn { position: absolute; top: 15px; right: 15px; color: #dc3545; border: none; background: none; font-size: 1.2rem; cursor: pointer; }
     .equipment-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #eee; }
+    .history-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #333; }
     #installBtn { display: none; }
     #toast-overlay { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 9999; pointer-events: none; }
     .custom-toast { background: #333; color: #fff; padding: 12px 24px; border-radius: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; opacity: 0; transition: 0.3s; transform: translateY(20px); }
     .custom-toast.show { opacity: 1; transform: translateY(0); }
     .custom-toast.error { background: #dc3545; }
     
-    /* PRINT STYLES */
     #printable-area { display: none; }
     @media print {
-      @page { size: A4; margin: 0.8cm; }
+      @page { size: A4; margin: 0.6cm; }
       body, html { height: 100%; width: 100%; margin: 0; background-color: white; }
-      .main-container, .nav, .btn, #toast-overlay, #installContainer { display: none !important; }
-      #printable-area { display: block !important; position: absolute; top: 0; left: 0; width: 100%; visibility: visible !important; font-family: 'Inter', sans-serif; font-size: 12px; color: #000; }
-      .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 15px; }
-      .print-logo { width: 90px; height: auto; }
-      .print-title { font-size: 1.8rem; font-family: 'Playfair Display'; font-weight: 700; text-transform: uppercase; margin: 0; }
-      .print-meta { text-align: right; font-size: 0.85rem; line-height: 1.3; }
-      .print-customer { margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; background-color: #fcfcfc !important; -webkit-print-color-adjust: exact; }
-      .event-section { margin-bottom: 15px; page-break-inside: avoid; }
-      .print-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-      .print-table th { text-align: left; border-bottom: 1px solid #000; padding: 4px 0; font-weight: 700; }
-      .print-table td { padding: 4px 0; border-bottom: 1px solid #eee; }
-      .print-summary { margin-top: 20px; border-top: 2px solid #000; padding-top: 10px; text-align: right; font-size: 1rem; }
-      .print-disclaimer { margin-top: 40px; font-size: 0.7rem; color: #555; text-align: justify; border-top: 1px solid #ccc; padding-top: 10px; font-style: italic; }
-      .print-footer { margin-top: 20px; text-align: center; font-size: 0.8rem; font-weight: 600; }
+      .main-container, .nav, .btn, #toast-overlay, #installContainer, .modal { display: none !important; }
+      #printable-area { display: block !important; position: absolute; top: 0; left: 0; width: 100%; visibility: visible !important; font-family: 'Inter', sans-serif; font-size: 11px; color: #000; }
+      .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+      .print-logo { width: 80px; height: auto; }
+      .print-title { font-size: 1.6rem; font-family: 'Playfair Display'; font-weight: 700; text-transform: uppercase; margin: 0; }
+      .print-meta { text-align: right; font-size: 0.8rem; line-height: 1.3; }
+      .print-customer { margin-bottom: 15px; padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9 !important; -webkit-print-color-adjust: exact; }
+      .event-section { margin-bottom: 10px; page-break-inside: avoid; }
+      .print-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+      .print-table th { text-align: left; border-bottom: 1px solid #000; padding: 4px 2px; font-weight: 700; background: #eee; -webkit-print-color-adjust: exact; }
+      .print-table td { padding: 4px 2px; border-bottom: 1px solid #eee; }
+      
+      .totals-grid { display: flex; justify-content: flex-end; margin-top: 10px; page-break-inside: avoid; }
+      .totals-box { width: 200px; text-align: right; }
+      .total-row { display: flex; justify-content: space-between; padding: 4px 0; }
+      .total-row.grand { border-top: 2px solid #000; font-weight: 700; font-size: 1.1rem; margin-top: 5px; padding-top: 5px; }
+
+      .disclaimer { margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px; font-size: 0.7rem; color: #555; text-align: justify; page-break-inside: avoid; }
+      .print-footer { margin-top: 10px; text-align: center; font-size: 0.75rem; font-weight: 600; }
     }
   </style>
 </head>
 <body>
   <div id="toast-overlay"><div id="toast-msg" class="custom-toast"><span id="toast-icon"></span><span id="toast-text"></span></div></div>
+
   <div class="main-container">
-    <div class="text-center mb-5">
-      <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" alt="Logo" style="height: 100px; margin-bottom: 15px;">
-      <h2 class="brand-font">Pranima Event Management</h2>
-      <p class="text-muted">Invoice & Estimate Generator</p>
+    <div class="text-center mb-4">
+      <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" alt="Logo" style="height: 80px; margin-bottom: 10px;">
+      <h3 class="brand-font m-0">Pranima Event Management</h3>
       <div id="installContainer" class="mt-2"><button id="installBtn" class="btn btn-sm btn-outline-dark rounded-pill"><i class="bi bi-download me-1"></i> Install App</button></div>
     </div>
+
     <ul class="nav nav-pills nav-fill mb-4 gap-2">
-      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-generator"><i class="bi bi-file-earmark-plus me-2"></i>New Invoice</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-history" onclick="fetchHistory()"><i class="bi bi-clock-history me-2"></i>History</button></li>
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-generator">New Invoice</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-history" onclick="fetchHistory()">History</button></li>
     </ul>
+
     <div class="tab-content">
       <div class="tab-pane fade show active" id="tab-generator">
         <form id="mainForm" onsubmit="event.preventDefault(); saveRecord();">
-          <div class="row g-4 mb-4">
-            <div class="col-md-6"><label class="form-label">Customer Details</label><input type="text" class="form-control mb-2" id="custName" placeholder="Full Name" required><input type="tel" class="form-control" id="custPhone" placeholder="Mobile Number" required></div>
-            <div class="col-md-6"><label class="form-label">Document Details</label><div class="d-flex gap-2 mb-2"><select class="form-select" id="docType"><option value="Estimate">Estimate</option><option value="Invoice">Invoice</option></select><input type="date" class="form-control" id="docDate" required></div><div class="text-end text-muted small">ID generated automatically</div></div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6"><input type="text" class="form-control" id="custName" placeholder="Customer Name" required></div>
+            <div class="col-md-6"><input type="tel" class="form-control" id="custPhone" placeholder="Mobile Number" required></div>
           </div>
-          <hr class="text-muted opacity-25 my-4">
+          <div class="d-flex gap-2 mb-4">
+             <select class="form-select w-auto" id="docType"><option value="Estimate">Estimate</option><option value="Invoice">Invoice</option></select>
+             <input type="date" class="form-control" id="docDate" required>
+          </div>
+
           <div id="events-container"></div>
-          <button type="button" class="btn btn-outline-dark w-100 py-2 mb-4 dashed-border" onclick="addEventBlock()"><i class="bi bi-plus-circle me-1"></i> Add Another Event</button>
           
+          <button type="button" class="btn btn-outline-dark w-100 py-2 mb-4 dashed-border" onclick="addEventBlock()"><i class="bi bi-plus-circle me-1"></i> Add Event</button>
+
           <div class="bg-light p-4 rounded-3">
-             <div class="row text-end align-items-center mb-2">
-               <div class="col-8 text-muted">Total:</div>
-               <div class="col-4"><h5 class="mb-0">₹ <span id="displayTotal">0.00</span></h5></div>
+             <div class="row g-3 align-items-center mb-2">
+                <div class="col-6 text-end text-muted">Total Amount:</div>
+                <div class="col-6 text-end fw-bold">₹ <span id="displayTotal">0.00</span></div>
              </div>
-             <div class="row text-end align-items-center mb-2">
-               <div class="col-8 text-muted">Advance Paid:</div>
-               <div class="col-4"><input type="number" id="advanceInput" class="form-control text-end d-inline-block" style="width: 120px;" placeholder="0" oninput="calculateTotal()"></div>
+             <div class="row g-3 align-items-center mb-2">
+                <div class="col-6 text-end text-muted">Advance Payment:</div>
+                <div class="col-6"><input type="number" class="form-control text-end" id="advanceAmt" placeholder="0" oninput="calculateTotal()"></div>
              </div>
-             <div class="row text-end align-items-center border-top pt-2">
-               <div class="col-8 fw-bold">Remaining Balance:</div>
-               <div class="col-4"><h3 class="mb-0 text-dark">₹ <span id="displayRemaining">0.00</span></h3></div>
+             <div class="row g-3 align-items-center border-top pt-2">
+                <div class="col-6 text-end fw-bold">Remaining Balance:</div>
+                <div class="col-6 text-end fw-bold text-danger fs-5">₹ <span id="displayRemaining">0.00</span></div>
              </div>
           </div>
 
           <div class="d-flex justify-content-end gap-3 mt-4">
-             <button type="button" class="btn btn-lg btn-secondary" onclick="generatePreview(true)"><i class="bi bi-printer me-2"></i> Print Only</button>
-             <button type="submit" class="btn btn-lg btn-dark px-5"><span id="saveBtnText">Save & Print</span><span id="saveSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span></button>
+             <button type="button" class="btn btn-secondary" onclick="generatePreview(true)">Print Preview</button>
+             <button type="submit" class="btn btn-dark px-4"><span id="saveBtnText">Save & Print</span><span id="saveSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span></button>
           </div>
         </form>
       </div>
+
       <div class="tab-pane fade" id="tab-history">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <input type="text" id="searchInput" class="form-control w-50" placeholder="Search..." onkeyup="filterHistory()">
-          <button class="btn btn-sm btn-outline-secondary" onclick="fetchHistory()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+        <div class="d-flex justify-content-between mb-3">
+           <input type="text" id="searchInput" class="form-control w-75 me-2" placeholder="Search..." onkeyup="filterHistory()">
+           <button class="btn btn-outline-secondary" onclick="fetchHistory()"><i class="bi bi-arrow-clockwise"></i></button>
         </div>
-        <div class="table-responsive">
-          <table class="table align-middle"><thead class="table-light"><tr><th>Date</th><th>Details</th><th>Total</th><th class="text-end">Actions</th></tr></thead><tbody id="historyBody"><tr><td colspan="4" class="text-center py-4">Loading...</td></tr></tbody></table>
+        <div id="historyList">
+           <div class="text-center py-5 text-muted">Loading...</div>
         </div>
       </div>
     </div>
   </div>
+
   <div id="printable-area"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // ==========================================
-    // PASTE YOUR NEW GOOGLE WEB APP URL HERE
+    // PASTE YOUR WEB APP URL HERE
     // ==========================================
-    const API_URL = "https://script.google.com/macros/s/AKfycbzLNi4TXBktx5JtxWHWcy41dS3-unWMSx7UjRDBnjrTqU0K9XXXfVhZuJ4ZZ32vv67L/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbwLH10YticwxsikJMQ3aVij5X0fWxIM5is4-LmLORJUEGKImuozMDxl1FBCFWpwKZzR/exec"; 
     // ==========================================
 
     let historyCache = [];
     document.getElementById('docDate').valueAsDate = new Date();
     addEventBlock();
 
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js').catch(console.error); }); }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(console.error)); }
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBtn').style.display = 'inline-block'; });
     document.getElementById('installBtn').addEventListener('click', () => { document.getElementById('installBtn').style.display = 'none'; if(deferredPrompt) deferredPrompt.prompt(); });
@@ -131,33 +146,43 @@
       return await response.json();
     }
 
-    // --- CALCULATIONS (Updated for Quantity) ---
+    // --- CALCULATIONS ---
     function calculateTotal() {
       let total = 0;
+      // Calculate row totals (Price * Qty)
       document.querySelectorAll('.equipment-row').forEach(row => {
          const qty = parseFloat(row.querySelector('.qty-input').value) || 1;
          const price = parseFloat(row.querySelector('.price-input').value) || 0;
          total += (qty * price);
       });
       
-      const advance = parseFloat(document.getElementById('advanceInput').value) || 0;
+      const advance = parseFloat(document.getElementById('advanceAmt').value) || 0;
       const remaining = total - advance;
 
       document.getElementById('displayTotal').innerText = total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
       document.getElementById('displayRemaining').innerText = remaining.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      return { total, advance, remaining };
     }
 
+    // --- FORM BUILDERS ---
     function addEventBlock() {
       const id = Date.now();
       const div = document.createElement('div');
       div.className = 'event-block';
       div.id = `evt-${id}`;
-      div.innerHTML = `<button type="button" class="delete-event-btn" onclick="removeEl('evt-${id}')"><i class="bi bi-trash"></i></button><div class="row g-3 mb-3"><div class="col-md-8"><label class="form-label">Event Name</label><input type="text" class="form-control event-name" required></div><div class="col-md-4"><label class="form-label">Date</label><input type="date" class="form-control event-date" required></div></div><div class="items-list"></div><button type="button" class="btn btn-sm btn-link text-decoration-none mt-2 ps-0" onclick="addItemRow(this)">+ Add Item</button>`;
+      div.innerHTML = `
+        <button type="button" class="delete-event-btn" onclick="removeEl('evt-${id}')"><i class="bi bi-trash"></i></button>
+        <div class="row g-2 mb-2">
+           <div class="col-8"><input type="text" class="form-control fw-bold event-name" placeholder="Event Name (e.g. Wedding)" required></div>
+           <div class="col-4"><input type="date" class="form-control event-date" required></div>
+        </div>
+        <div class="items-list"></div>
+        <button type="button" class="btn btn-sm btn-link text-decoration-none mt-1 p-0" onclick="addItemRow(this)">+ Add Item</button>
+      `;
       document.getElementById('events-container').appendChild(div);
       addItemRow(div.querySelector('.btn-link'));
     }
 
-    // --- NEW ITEM ROW WITH QUANTITY ---
     function addItemRow(btn) {
       const list = btn.previousElementSibling;
       const id = Date.now() + Math.random();
@@ -165,24 +190,25 @@
       div.className = 'equipment-row';
       div.id = `item-${id}`;
       div.innerHTML = `
-        <div class="flex-grow-1"><input type="text" class="form-control item-name" placeholder="Item Name" required></div>
-        <div style="width: 80px;"><input type="number" class="form-control qty-input text-center" placeholder="Qty" value="1" min="1" oninput="calculateTotal()" required></div>
-        <div style="width: 120px;"><input type="number" class="form-control price-input text-end" placeholder="Price" oninput="calculateTotal()" required></div>
-        <button type="button" class="btn-icon text-danger border-0 bg-transparent" onclick="removeEl('item-${id}')"><i class="bi bi-x-lg"></i></button>
+        <div class="col-7"><input type="text" class="form-control item-name" placeholder="Item Name" required></div>
+        <div class="col-2"><input type="number" class="form-control qty-input text-center" placeholder="Qty" value="1" oninput="calculateTotal()" required></div>
+        <div class="col-3"><input type="number" class="form-control price-input text-end" placeholder="Price" oninput="calculateTotal()" required></div>
+        <button type="button" class="btn-icon text-danger border-0 bg-transparent ms-2" onclick="removeEl('item-${id}')"><i class="bi bi-x-lg"></i></button>
       `;
       list.appendChild(div);
     }
     function removeEl(id) { document.getElementById(id).remove(); calculateTotal(); }
 
     function getFormData() {
+      const nums = calculateTotal();
       const data = {
         customerName: document.getElementById('custName').value,
         customerPhone: document.getElementById('custPhone').value,
         type: document.getElementById('docType').value,
         issueDate: document.getElementById('docDate').value,
-        grandTotal: document.getElementById('displayTotal').innerText,
-        advance: document.getElementById('advanceInput').value || "0",
-        remaining: document.getElementById('displayRemaining').innerText,
+        grandTotal: nums.total.toLocaleString('en-IN', {minimumFractionDigits:2}),
+        advance: nums.advance,
+        remaining: nums.remaining,
         events: []
       };
       document.querySelectorAll('.event-block').forEach(blk => {
@@ -209,64 +235,128 @@
         const data = getFormData();
         const res = await callApi({ action: 'SAVE', data: data });
         btnTxt.innerText = "Save & Print"; spinner.classList.add('d-none');
-        if (res.success) { showToast("Saved! ID: " + res.id); data.invoiceId = res.id; printInvoice(data); }
+        if (res.success) { showToast("Saved!"); data.invoiceId = res.id; printInvoice(data); }
         else { showToast("Error: " + res.error, 'error'); }
-      } catch (err) {
-        btnTxt.innerText = "Save & Print"; spinner.classList.add('d-none');
-        showToast("Connection Failed (" + err.message + ")", 'error');
-      }
+      } catch (err) { btnTxt.innerText = "Save & Print"; spinner.classList.add('d-none'); showToast("Failed", 'error'); }
     }
 
+    // --- HISTORY ---
     async function fetchHistory() {
-      const tbody = document.getElementById('historyBody');
-      tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Loading...</td></tr>';
-      try { const data = await callApi({ action: 'GET_HISTORY' }); historyCache = data; renderHistory(data); } catch (err) { tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-danger">Connection Failed.</td></tr>`; }
+      const list = document.getElementById('historyList');
+      list.innerHTML = '<div class="text-center py-5 text-muted">Loading...</div>';
+      try {
+        const data = await callApi({ action: 'GET_HISTORY' });
+        historyCache = data;
+        renderHistory(data);
+      } catch (err) { list.innerHTML = `<div class="text-center text-danger">Failed to load history</div>`; }
     }
-    function renderHistory(data) {
-      const tbody = document.getElementById('historyBody');
-      tbody.innerHTML = '';
-      if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">No history found.</td></tr>'; return; }
-      data.forEach(row => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${new Date(row.date).toLocaleDateString('en-IN')}</td><td><strong>${row.name}</strong><br><span class="text-muted small">${row.type} | ${row.id}</span></td><td class="fw-bold">₹${row.total}</td><td class="text-end"><button class="btn btn-sm btn-outline-dark me-1" onclick='reprintHistory("${row.id}")'><i class="bi bi-printer"></i></button><button class="btn btn-sm btn-outline-danger" onclick='deleteHistory("${row.id}")'><i class="bi bi-trash"></i></button></td>`;
-        tbody.appendChild(tr);
-      });
-    }
-    async function deleteHistory(id) { if(!confirm("Delete " + id + "?")) return; showToast("Deleting...", "default"); try { const res = await callApi({ action: 'DELETE', id: id }); if (res.success) { showToast("Deleted"); fetchHistory(); } else { showToast("Failed", 'error'); } } catch(e) { showToast("Failed", 'error'); } }
-    function reprintHistory(id) { const record = historyCache.find(r => r.id === id); if (record) { const data = JSON.parse(record.jsonData); data.invoiceId = id; printInvoice(data); } }
-    function filterHistory() { const term = document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('#historyBody tr').forEach(row => { row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none'; }); }
-    function generatePreview() { const data = getFormData(); data.invoiceId = "PREVIEW"; printInvoice(data); }
-    function showToast(msg, type='success') { const t=document.getElementById('toast-msg'); document.getElementById('toast-text').innerText=msg; document.getElementById('toast-icon').innerHTML=type==='success'?'<i class="bi bi-check-circle-fill"></i>':'<i class="bi bi-exclamation-circle-fill"></i>'; t.className=`custom-toast ${type} show`; setTimeout(()=>t.classList.remove('show'),3000); }
 
-    // --- PRINT WITH DISCLAIMER ---
+    function renderHistory(data) {
+       const list = document.getElementById('historyList');
+       list.innerHTML = '';
+       if (!data || data.length === 0) { list.innerHTML = '<div class="text-center text-muted">No records found.</div>'; return; }
+       
+       data.forEach(row => {
+          let details = { advance: 0, remaining: row.total, grandTotal: row.total };
+          try { details = JSON.parse(row.jsonData); } catch(e){}
+          
+          const div = document.createElement('div');
+          div.className = 'history-card';
+          div.innerHTML = `
+            <div class="d-flex justify-content-between">
+               <div>
+                  <h5 class="m-0">${row.name}</h5>
+                  <small class="text-muted">${row.id} | ${new Date(row.date).toLocaleDateString('en-IN')}</small>
+               </div>
+               <div class="text-end">
+                  <div class="fw-bold">₹${details.grandTotal}</div>
+                  <small class="text-success">Paid: ₹${details.advance || 0}</small>
+               </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+               <span class="badge ${details.remaining > 0 ? 'bg-danger' : 'bg-success'}">Bal: ₹${parseFloat(details.remaining).toLocaleString('en-IN')}</span>
+               <div>
+                  <button class="btn btn-sm btn-outline-primary me-1" onclick='updatePayment("${row.id}")'>Update Pay</button>
+                  <button class="btn btn-sm btn-outline-dark me-1" onclick='reprintHistory("${row.id}")'><i class="bi bi-printer"></i></button>
+                  <button class="btn btn-sm btn-outline-danger" onclick='deleteHistory("${row.id}")'><i class="bi bi-trash"></i></button>
+               </div>
+            </div>
+          `;
+          list.appendChild(div);
+       });
+    }
+
+    async function updatePayment(id) {
+       const newAdvance = prompt("Enter NEW Total Advance Amount:");
+       if(newAdvance === null) return;
+       
+       showToast("Updating...", "default");
+       try {
+         const res = await callApi({ action: 'UPDATE_PAYMENT', id: id, advance: newAdvance });
+         if(res.success) { showToast("Updated"); fetchHistory(); }
+         else { showToast("Error", 'error'); }
+       } catch(e) { showToast("Failed", 'error'); }
+    }
+
+    async function deleteHistory(id) {
+      if(!confirm("Delete " + id + "?")) return;
+      showToast("Deleting...", "default");
+      try { const res = await callApi({ action: 'DELETE', id: id }); if (res.success) { showToast("Deleted"); fetchHistory(); } else { showToast("Failed", 'error'); } }
+      catch(e) { showToast("Failed", 'error'); }
+    }
+    
+    function reprintHistory(id) { const record = historyCache.find(r => r.id === id); if (record) { const data = JSON.parse(record.jsonData); data.invoiceId = id; printInvoice(data); } }
+    function filterHistory() { const term = document.getElementById('searchInput').value.toLowerCase(); const cards = document.querySelectorAll('.history-card'); cards.forEach(c => c.style.display = c.innerText.toLowerCase().includes(term) ? '' : 'none'); }
+    function showToast(msg, type='success') { const t=document.getElementById('toast-msg'); document.getElementById('toast-text').innerText=msg; document.getElementById('toast-icon').innerHTML=type==='success'?'<i class="bi bi-check-circle-fill"></i>':'<i class="bi bi-exclamation-circle-fill"></i>'; t.className=`custom-toast ${type} show`; setTimeout(()=>t.classList.remove('show'),3000); }
+    function generatePreview() { const data = getFormData(); data.invoiceId = "PREVIEW"; printInvoice(data); }
+
     function printInvoice(data) {
       const area = document.getElementById('printable-area');
-      let html = `<div class="print-header"><img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" class="print-logo"><div class="text-end"><div class="print-title">${data.type}</div><div class="print-meta">ID: ${data.invoiceId}<br>Date: ${data.issueDate}</div></div></div><div class="print-customer"><strong>Bill To:</strong><br>${data.customerName}<br>${data.customerPhone}</div>`;
-      
+      // Calculate numeric values for safety
+      const total = parseFloat(String(data.grandTotal).replace(/,/g,''));
+      const adv = parseFloat(data.advance) || 0;
+      const rem = parseFloat(data.remaining) || (total - adv);
+
+      let html = `
+        <div class="print-header">
+           <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" class="print-logo">
+           <div class="text-end">
+              <div class="print-title">${data.type}</div>
+              <div class="print-meta">ID: ${data.invoiceId}<br>Date: ${data.issueDate}</div>
+           </div>
+        </div>
+        <div class="print-customer"><strong>Bill To:</strong><br>${data.customerName}<br>${data.customerPhone}</div>
+      `;
+
       data.events.forEach(evt => {
-        html += `<div class="event-section"><strong>Event: ${evt.eventName}</strong> <span style="color:#666; font-size:0.9em;">(${evt.eventDate})</span><table class="print-table"><thead><tr><th style="width:50%">Description</th><th style="text-align:center; width:15%">Qty</th><th style="text-align:right; width:20%">Price</th><th style="text-align:right; width:15%">Total</th></tr></thead><tbody>`;
-        evt.items.forEach(item => { 
-           const qty = parseFloat(item.qty) || 1;
-           const price = parseFloat(item.price) || 0;
-           const lineTotal = qty * price;
-           html += `<tr><td>${item.name}</td><td style="text-align:center;">${qty}</td><td style="text-align:right;">₹${price}</td><td style="text-align:right;">₹${lineTotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td></tr>`; 
+        html += `
+          <div class="event-section">
+             <strong>${evt.eventName}</strong> <small>(${evt.eventDate})</small>
+             <table class="print-table">
+               <thead><tr><th width="50%">Item</th><th width="15%" class="text-center">Qty</th><th width="20%" class="text-end">Rate</th><th width="15%" class="text-end">Amt</th></tr></thead>
+               <tbody>
+        `;
+        evt.items.forEach(item => {
+           const qty = parseFloat(item.qty);
+           const rate = parseFloat(item.price);
+           const amt = qty * rate;
+           html += `<tr><td>${item.name}</td><td class="text-center">${qty}</td><td class="text-end">${rate}</td><td class="text-end">${amt.toLocaleString('en-IN')}</td></tr>`;
         });
         html += `</tbody></table></div>`;
       });
 
-      const adv = parseFloat(data.advance) || 0;
-      
       html += `
-        <div class="print-summary">
-           <div>Total Amount: <strong>₹${data.grandTotal}</strong></div>
-           <div>Advance Paid: ₹${adv.toLocaleString('en-IN', {minimumFractionDigits: 2})}</div>
-           <div style="font-size: 1.2rem; margin-top:5px;">Remaining Balance: <strong>₹${data.remaining}</strong></div>
+        <div class="totals-grid">
+           <div class="totals-box">
+              <div class="total-row"><span>Total:</span> <span>₹${total.toLocaleString('en-IN', {minimumFractionDigits:2})}</span></div>
+              <div class="total-row"><span>Advance:</span> <span>₹${adv.toLocaleString('en-IN', {minimumFractionDigits:2})}</span></div>
+              <div class="total-row grand"><span>Balance:</span> <span>₹${rem.toLocaleString('en-IN', {minimumFractionDigits:2})}</span></div>
+           </div>
         </div>
         
-        <div class="print-disclaimer">
-          <strong>Disclaimer:</strong> While Pranima Event Management strives for perfection, we shall not be held liable for any interruptions, delays, or failures caused by technical malfunctions, power outages, equipment breakdown, or force majeure events beyond our reasonable control. Any refunds or adjustments in such cases will be at the sole discretion of the management.
+        <div class="disclaimer">
+           <strong>Disclaimer:</strong> While Pranima Event Management strives for perfection, we are not liable for service interruptions caused by technical failures, power outages, weather conditions, or equipment malfunctions beyond our direct control. Any refunds or adjustments related to such issues will be at the sole discretion of management.
         </div>
-
         <div class="print-footer">Thank you for choosing Pranima Event Management!</div>
       `;
       area.innerHTML = html;
