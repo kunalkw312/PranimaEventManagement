@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pranima-v1';
+const CACHE_NAME = 'pranima-v2-force-update';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
