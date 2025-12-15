@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pranima-v7-modal-fix'; 
+const CACHE_NAME = 'pranima-v8-terms-update'; 
 
 const ASSETS = [
   './',
