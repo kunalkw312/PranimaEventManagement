@@ -7,62 +7,134 @@
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#111111">
   <link rel="apple-touch-icon" href="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
   <style>
-    :root { --primary: #111; --secondary: #666; --bg-color: #f4f6f8; --card-bg: #ffffff; }
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--primary); padding-bottom: 80px; }
-    h1, h2, h3, h4 { font-weight: 700; color: var(--primary); }
-    .brand-font { font-family: 'Playfair Display', serif; letter-spacing: 1px; }
-    .main-container { max-width: 950px; margin: 40px auto; background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); padding: 40px; }
-    .nav-pills .nav-link { color: var(--secondary); border-radius: 8px; font-weight: 500; }
-    .nav-pills .nav-link.active { background-color: var(--primary); color: #fff; }
-    .form-control, .form-select { border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
-    .event-block { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 25px; margin-bottom: 25px; position: relative; }
-    .delete-event-btn { position: absolute; top: 15px; right: 15px; color: #dc3545; border: none; background: none; font-size: 1.2rem; cursor: pointer; }
-    .equipment-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #eee; }
-    .history-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #333; }
+    :root { --primary: #000; --bg: #f8f9fa; --surface: #fff; --border: #e9ecef; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--primary); padding-bottom: 80px; }
+    
+    /* Branding */
+    .brand-font { font-family: 'Playfair Display', serif; }
+    .main-container { max-width: 800px; margin: 30px auto; background: var(--surface); border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); padding: 30px; }
+
+    /* Inputs */
+    .form-control, .form-select { border: 1px solid #ced4da; padding: 10px; border-radius: 8px; font-size: 0.95rem; }
+    .form-control:focus { border-color: #000; box-shadow: 0 0 0 2px rgba(0,0,0,0.1); }
+
+    /* Event Blocks (Fixed Overlap) */
+    .event-block { 
+      background: #fff; 
+      border: 1px solid var(--border); 
+      border-radius: 12px; 
+      padding: 20px; 
+      margin-bottom: 20px; 
+      position: relative; 
+      padding-top: 40px; /* Space for trash icon */
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .delete-event-btn { 
+      position: absolute; 
+      top: 10px; 
+      right: 10px; 
+      background: #ffeeee; 
+      color: #dc3545; 
+      border: none; 
+      width: 32px; height: 32px; 
+      border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center;
+      transition: 0.2s;
+    }
+    .delete-event-btn:hover { background: #dc3545; color: #fff; }
+
+    /* Equipment Rows (Fixed Overlap) */
+    .equipment-row { 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      margin-bottom: 10px; 
+      padding-bottom: 10px; 
+      border-bottom: 1px dashed var(--border); 
+    }
+    .equipment-row:last-child { border-bottom: none; }
+    .btn-remove-item {
+      color: #999;
+      border: 1px solid #eee;
+      background: #fff;
+      border-radius: 6px;
+      width: 36px; height: 38px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .btn-remove-item:hover { color: #dc3545; border-color: #dc3545; }
+
+    /* Cleaner History Cards */
+    .history-card { 
+      background: #fff; 
+      border: 1px solid var(--border); 
+      border-radius: 10px; 
+      padding: 16px; 
+      margin-bottom: 12px;
+      transition: transform 0.1s;
+    }
+    .history-card:active { transform: scale(0.99); }
+    .history-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; color: #666; }
+    .history-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 4px; }
+    .history-stats { display: flex; gap: 10px; margin-top: 12px; font-size: 0.9rem; }
+    .badge-soft { padding: 4px 8px; border-radius: 6px; font-weight: 500; font-size: 0.8rem; }
+    .bg-soft-success { background: #d1e7dd; color: #0f5132; }
+    .bg-soft-danger { background: #f8d7da; color: #842029; }
+    .history-actions { margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 8px; }
+
+    /* UI Elements */
     #installBtn { display: none; }
     #toast-overlay { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 9999; pointer-events: none; }
-    .custom-toast { background: #333; color: #fff; padding: 12px 24px; border-radius: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; opacity: 0; transition: 0.3s; transform: translateY(20px); }
+    .custom-toast { background: #222; color: #fff; padding: 10px 20px; border-radius: 30px; font-size: 0.9rem; opacity: 0; transition: 0.3s; transform: translateY(10px); }
     .custom-toast.show { opacity: 1; transform: translateY(0); }
-    .custom-toast.error { background: #dc3545; }
     
+    /* Print Area (Hidden) */
     #printable-area { display: none; }
-    @media print {
-      @page { size: A4; margin: 0.6cm; }
-      body, html { height: 100%; width: 100%; margin: 0; background-color: white; }
-      .main-container, .nav, .btn, #toast-overlay, #installContainer, .modal { display: none !important; }
-      #printable-area { display: block !important; position: absolute; top: 0; left: 0; width: 100%; visibility: visible !important; font-family: 'Inter', sans-serif; font-size: 11px; color: #000; }
-      .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 10px; }
-      .print-logo { width: 80px; height: auto; }
-      .print-title { font-size: 1.6rem; font-family: 'Playfair Display'; font-weight: 700; text-transform: uppercase; margin: 0; }
-      .print-meta { text-align: right; font-size: 0.8rem; line-height: 1.3; }
-      .print-customer { margin-bottom: 15px; padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9 !important; -webkit-print-color-adjust: exact; }
-      .event-section { margin-bottom: 10px; page-break-inside: avoid; }
-      .print-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-      .print-table th { text-align: left; border-bottom: 1px solid #000; padding: 4px 2px; font-weight: 700; background: #eee; -webkit-print-color-adjust: exact; }
-      .print-table td { padding: 4px 2px; border-bottom: 1px solid #eee; }
-      
-      .totals-grid { display: flex; justify-content: flex-end; margin-top: 10px; page-break-inside: avoid; }
-      .totals-box { width: 200px; text-align: right; }
-      .total-row { display: flex; justify-content: space-between; padding: 4px 0; }
-      .total-row.grand { border-top: 2px solid #000; font-weight: 700; font-size: 1.1rem; margin-top: 5px; padding-top: 5px; }
 
-      .disclaimer { margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px; font-size: 0.7rem; color: #555; text-align: justify; page-break-inside: avoid; }
-      .print-footer { margin-top: 10px; text-align: center; font-size: 0.75rem; font-weight: 600; }
+    @media print {
+      @page { size: A4; margin: 0.5cm; }
+      body, html { background: #fff; margin: 0; padding: 0; width: 100%; height: 100%; }
+      .main-container, .nav, .btn, #toast-overlay, #installContainer { display: none !important; }
+      
+      #printable-area { 
+        display: block !important; 
+        position: absolute; top: 0; left: 0; width: 100%; 
+        font-family: 'Inter', sans-serif; font-size: 11px; color: #000; 
+      }
+      
+      /* Print Layout */
+      .print-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+      .print-logo { width: 90px; }
+      .print-title { font-family: 'Playfair Display'; font-weight: 700; font-size: 1.8rem; text-transform: uppercase; }
+      
+      .print-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+      .print-table th { border-bottom: 1px solid #000; text-align: left; padding: 4px; font-size: 0.85rem; background: #eee; -webkit-print-color-adjust: exact; }
+      .print-table td { border-bottom: 1px solid #eee; padding: 4px; }
+      
+      .totals-section { display: flex; justify-content: flex-end; margin-top: 10px; }
+      .totals-table { width: 250px; text-align: right; }
+      .totals-table td { padding: 3px 0; }
+      .grand-total { border-top: 2px solid #000; font-weight: 700; font-size: 1.1rem; padding-top: 5px; }
+      
+      .disclaimer { margin-top: 25px; font-size: 0.7rem; color: #555; text-align: justify; border-top: 1px solid #ccc; padding-top: 10px; }
+      .print-footer { text-align: center; margin-top: 10px; font-weight: 600; font-size: 0.8rem; }
     }
   </style>
 </head>
 <body>
-  <div id="toast-overlay"><div id="toast-msg" class="custom-toast"><span id="toast-icon"></span><span id="toast-text"></span></div></div>
+
+  <div id="toast-overlay"><div id="toast-msg" class="custom-toast">Action Successful</div></div>
 
   <div class="main-container">
     <div class="text-center mb-4">
-      <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" alt="Logo" style="height: 80px; margin-bottom: 10px;">
-      <h3 class="brand-font m-0">Pranima Event Management</h3>
-      <div id="installContainer" class="mt-2"><button id="installBtn" class="btn btn-sm btn-outline-dark rounded-pill"><i class="bi bi-download me-1"></i> Install App</button></div>
+      <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" alt="Logo" style="height: 70px; margin-bottom: 8px;">
+      <h4 class="brand-font m-0">Pranima Event Management</h4>
+      <div id="installContainer" class="mt-2"><button id="installBtn" class="btn btn-sm btn-dark rounded-pill px-3">Install App</button></div>
     </div>
 
     <ul class="nav nav-pills nav-fill mb-4 gap-2">
@@ -73,45 +145,48 @@
     <div class="tab-content">
       <div class="tab-pane fade show active" id="tab-generator">
         <form id="mainForm" onsubmit="event.preventDefault(); saveRecord();">
-          <div class="row g-3 mb-3">
-            <div class="col-md-6"><input type="text" class="form-control" id="custName" placeholder="Customer Name" required></div>
-            <div class="col-md-6"><input type="tel" class="form-control" id="custPhone" placeholder="Mobile Number" required></div>
+          <div class="row g-2 mb-3">
+            <div class="col-6"><input type="text" class="form-control" id="custName" placeholder="Customer Name" required></div>
+            <div class="col-6"><input type="tel" class="form-control" id="custPhone" placeholder="Phone" required></div>
           </div>
-          <div class="d-flex gap-2 mb-4">
+          <div class="d-flex gap-2 mb-3">
              <select class="form-select w-auto" id="docType"><option value="Estimate">Estimate</option><option value="Invoice">Invoice</option></select>
              <input type="date" class="form-control" id="docDate" required>
           </div>
 
           <div id="events-container"></div>
           
-          <button type="button" class="btn btn-outline-dark w-100 py-2 mb-4 dashed-border" onclick="addEventBlock()"><i class="bi bi-plus-circle me-1"></i> Add Event</button>
+          <button type="button" class="btn btn-outline-dark w-100 py-2 mb-4 dashed-border" onclick="addEventBlock()">
+             <i class="bi bi-plus-lg me-1"></i> Add Another Event
+          </button>
 
-          <div class="bg-light p-4 rounded-3">
-             <div class="row g-3 align-items-center mb-2">
-                <div class="col-6 text-end text-muted">Total Amount:</div>
-                <div class="col-6 text-end fw-bold">₹ <span id="displayTotal">0.00</span></div>
+          <div class="bg-light p-3 rounded-3 mb-4">
+             <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Total Amount</span>
+                <span class="fw-bold fs-5">₹<span id="displayTotal">0.00</span></span>
              </div>
-             <div class="row g-3 align-items-center mb-2">
-                <div class="col-6 text-end text-muted">Advance Payment:</div>
-                <div class="col-6"><input type="number" class="form-control text-end" id="advanceAmt" placeholder="0" oninput="calculateTotal()"></div>
+             <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted">Advance Paid</span>
+                <input type="number" id="advanceAmt" class="form-control text-end" style="width: 120px;" placeholder="0" oninput="calculateTotal()">
              </div>
-             <div class="row g-3 align-items-center border-top pt-2">
-                <div class="col-6 text-end fw-bold">Remaining Balance:</div>
-                <div class="col-6 text-end fw-bold text-danger fs-5">₹ <span id="displayRemaining">0.00</span></div>
+             <div class="d-flex justify-content-between pt-2 border-top">
+                <span class="fw-bold">Balance Due</span>
+                <span class="fw-bold fs-5 text-danger">₹<span id="displayRemaining">0.00</span></span>
              </div>
           </div>
 
-          <div class="d-flex justify-content-end gap-3 mt-4">
-             <button type="button" class="btn btn-secondary" onclick="generatePreview(true)">Print Preview</button>
-             <button type="submit" class="btn btn-dark px-4"><span id="saveBtnText">Save & Print</span><span id="saveSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span></button>
+          <div class="d-flex gap-2">
+             <button type="button" class="btn btn-light flex-grow-1" onclick="generatePreview(true)">Preview</button>
+             <button type="submit" class="btn btn-dark flex-grow-1"><span id="saveBtnText">Save & Print</span></button>
           </div>
         </form>
       </div>
 
       <div class="tab-pane fade" id="tab-history">
-        <div class="d-flex justify-content-between mb-3">
-           <input type="text" id="searchInput" class="form-control w-75 me-2" placeholder="Search..." onkeyup="filterHistory()">
-           <button class="btn btn-outline-secondary" onclick="fetchHistory()"><i class="bi bi-arrow-clockwise"></i></button>
+        <div class="input-group mb-3">
+           <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+           <input type="text" id="searchInput" class="form-control" placeholder="Search..." onkeyup="filterHistory()">
+           <button class="btn btn-light border" onclick="fetchHistory()"><i class="bi bi-arrow-clockwise"></i></button>
         </div>
         <div id="historyList">
            <div class="text-center py-5 text-muted">Loading...</div>
@@ -125,15 +200,16 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // ==========================================
-    // PASTE YOUR WEB APP URL HERE
+    // PASTE YOUR NEW WEB APP URL HERE
     // ==========================================
-    const API_URL = "https://script.google.com/macros/s/AKfycbwLH10YticwxsikJMQ3aVij5X0fWxIM5is4-LmLORJUEGKImuozMDxl1FBCFWpwKZzR/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzimQLhnbiV0IDut5yz6s9xlDY_jBl0X0e-yYQTAZE4LDpreE9y1ywLqOuCdKO-IXB9/exec"; 
     // ==========================================
 
     let historyCache = [];
     document.getElementById('docDate').valueAsDate = new Date();
     addEventBlock();
 
+    // PWA
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(console.error)); }
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBtn').style.display = 'inline-block'; });
@@ -146,25 +222,22 @@
       return await response.json();
     }
 
-    // --- CALCULATIONS ---
+    // Calculations
     function calculateTotal() {
       let total = 0;
-      // Calculate row totals (Price * Qty)
       document.querySelectorAll('.equipment-row').forEach(row => {
          const qty = parseFloat(row.querySelector('.qty-input').value) || 1;
          const price = parseFloat(row.querySelector('.price-input').value) || 0;
          total += (qty * price);
       });
-      
-      const advance = parseFloat(document.getElementById('advanceAmt').value) || 0;
-      const remaining = total - advance;
-
-      document.getElementById('displayTotal').innerText = total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-      document.getElementById('displayRemaining').innerText = remaining.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-      return { total, advance, remaining };
+      const adv = parseFloat(document.getElementById('advanceAmt').value) || 0;
+      const rem = total - adv;
+      document.getElementById('displayTotal').innerText = total.toLocaleString('en-IN', {minimumFractionDigits:2});
+      document.getElementById('displayRemaining').innerText = rem.toLocaleString('en-IN', {minimumFractionDigits:2});
+      return { total, adv, rem };
     }
 
-    // --- FORM BUILDERS ---
+    // Builder Functions
     function addEventBlock() {
       const id = Date.now();
       const div = document.createElement('div');
@@ -173,11 +246,11 @@
       div.innerHTML = `
         <button type="button" class="delete-event-btn" onclick="removeEl('evt-${id}')"><i class="bi bi-trash"></i></button>
         <div class="row g-2 mb-2">
-           <div class="col-8"><input type="text" class="form-control fw-bold event-name" placeholder="Event Name (e.g. Wedding)" required></div>
-           <div class="col-4"><input type="date" class="form-control event-date" required></div>
+           <div class="col-8"><label class="small text-muted">Event Name</label><input type="text" class="form-control fw-bold event-name" required></div>
+           <div class="col-4"><label class="small text-muted">Date</label><input type="date" class="form-control event-date" required></div>
         </div>
         <div class="items-list"></div>
-        <button type="button" class="btn btn-sm btn-link text-decoration-none mt-1 p-0" onclick="addItemRow(this)">+ Add Item</button>
+        <button type="button" class="btn btn-sm btn-link text-decoration-none p-0 mt-2" onclick="addItemRow(this)">+ Add Item</button>
       `;
       document.getElementById('events-container').appendChild(div);
       addItemRow(div.querySelector('.btn-link'));
@@ -190,10 +263,10 @@
       div.className = 'equipment-row';
       div.id = `item-${id}`;
       div.innerHTML = `
-        <div class="col-7"><input type="text" class="form-control item-name" placeholder="Item Name" required></div>
-        <div class="col-2"><input type="number" class="form-control qty-input text-center" placeholder="Qty" value="1" oninput="calculateTotal()" required></div>
-        <div class="col-3"><input type="number" class="form-control price-input text-end" placeholder="Price" oninput="calculateTotal()" required></div>
-        <button type="button" class="btn-icon text-danger border-0 bg-transparent ms-2" onclick="removeEl('item-${id}')"><i class="bi bi-x-lg"></i></button>
+        <div style="flex: 2"><input type="text" class="form-control item-name" placeholder="Item"></div>
+        <div style="width: 70px"><input type="number" class="form-control qty-input text-center" value="1" oninput="calculateTotal()"></div>
+        <div style="width: 100px"><input type="number" class="form-control price-input text-end" placeholder="₹" oninput="calculateTotal()"></div>
+        <button type="button" class="btn-remove-item" onclick="removeEl('item-${id}')"><i class="bi bi-x"></i></button>
       `;
       list.appendChild(div);
     }
@@ -207,40 +280,40 @@
         type: document.getElementById('docType').value,
         issueDate: document.getElementById('docDate').value,
         grandTotal: nums.total.toLocaleString('en-IN', {minimumFractionDigits:2}),
-        advance: nums.advance,
-        remaining: nums.remaining,
+        advance: nums.adv,
+        remaining: nums.rem,
         events: []
       };
       document.querySelectorAll('.event-block').forEach(blk => {
         const evt = { eventName: blk.querySelector('.event-name').value, eventDate: blk.querySelector('.event-date').value, items: [] };
-        blk.querySelectorAll('.equipment-row').forEach(row => { 
+        blk.querySelectorAll('.equipment-row').forEach(row => {
             evt.items.push({ 
                 name: row.querySelector('.item-name').value, 
-                qty: row.querySelector('.qty-input').value,
+                qty: row.querySelector('.qty-input').value, 
                 price: row.querySelector('.price-input').value 
-            }); 
+            });
         });
         data.events.push(evt);
       });
       return data;
     }
 
+    // Save
     async function saveRecord() {
       const form = document.getElementById('mainForm');
       if (!form.checkValidity()) { form.reportValidity(); return; }
-      const btnTxt = document.getElementById('saveBtnText');
-      const spinner = document.getElementById('saveSpinner');
-      btnTxt.innerText = "Saving..."; spinner.classList.remove('d-none');
+      const btn = document.getElementById('saveBtnText');
+      btn.innerText = "Saving...";
       try {
         const data = getFormData();
         const res = await callApi({ action: 'SAVE', data: data });
-        btnTxt.innerText = "Save & Print"; spinner.classList.add('d-none');
-        if (res.success) { showToast("Saved!"); data.invoiceId = res.id; printInvoice(data); }
-        else { showToast("Error: " + res.error, 'error'); }
-      } catch (err) { btnTxt.innerText = "Save & Print"; spinner.classList.add('d-none'); showToast("Failed", 'error'); }
+        btn.innerText = "Save & Print";
+        if (res.success) { showToast("Saved Successfully"); data.invoiceId = res.id; printInvoice(data); }
+        else { showToast("Error Saving", "error"); }
+      } catch (err) { btn.innerText = "Save & Print"; showToast("Connection Error", "error"); }
     }
 
-    // --- HISTORY ---
+    // History Logic
     async function fetchHistory() {
       const list = document.getElementById('historyList');
       list.innerHTML = '<div class="text-center py-5 text-muted">Loading...</div>';
@@ -248,7 +321,7 @@
         const data = await callApi({ action: 'GET_HISTORY' });
         historyCache = data;
         renderHistory(data);
-      } catch (err) { list.innerHTML = `<div class="text-center text-danger">Failed to load history</div>`; }
+      } catch (err) { list.innerHTML = `<div class="text-center text-danger">Failed to load</div>`; }
     }
 
     function renderHistory(data) {
@@ -257,29 +330,27 @@
        if (!data || data.length === 0) { list.innerHTML = '<div class="text-center text-muted">No records found.</div>'; return; }
        
        data.forEach(row => {
-          let details = { advance: 0, remaining: row.total, grandTotal: row.total };
-          try { details = JSON.parse(row.jsonData); } catch(e){}
-          
+          let rec = { advance: row.advance || 0, remaining: row.remaining || row.total, grandTotal: row.total };
+          // Handle legacy JSON if needed
+          try { if(row.jsonData) rec = JSON.parse(row.jsonData); } catch(e){}
+          // Ensure we use sheet columns if available (they are more current)
+          if(row.advance !== undefined && row.remaining !== undefined) {
+             rec.advance = row.advance; rec.remaining = row.remaining;
+          }
+
           const div = document.createElement('div');
           div.className = 'history-card';
           div.innerHTML = `
-            <div class="d-flex justify-content-between">
-               <div>
-                  <h5 class="m-0">${row.name}</h5>
-                  <small class="text-muted">${row.id} | ${new Date(row.date).toLocaleDateString('en-IN')}</small>
-               </div>
-               <div class="text-end">
-                  <div class="fw-bold">₹${details.grandTotal}</div>
-                  <small class="text-success">Paid: ₹${details.advance || 0}</small>
-               </div>
+            <div class="history-header"><span>${row.id}</span><span>${new Date(row.date).toLocaleDateString('en-IN')}</span></div>
+            <div class="history-title">${row.name}</div>
+            <div class="history-stats">
+               <span class="badge-soft bg-soft-success">Paid: ₹${rec.advance}</span>
+               <span class="badge-soft ${rec.remaining > 0 ? 'bg-soft-danger' : 'bg-soft-success'}">Bal: ₹${rec.remaining}</span>
             </div>
-            <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
-               <span class="badge ${details.remaining > 0 ? 'bg-danger' : 'bg-success'}">Bal: ₹${parseFloat(details.remaining).toLocaleString('en-IN')}</span>
-               <div>
-                  <button class="btn btn-sm btn-outline-primary me-1" onclick='updatePayment("${row.id}")'>Update Pay</button>
-                  <button class="btn btn-sm btn-outline-dark me-1" onclick='reprintHistory("${row.id}")'><i class="bi bi-printer"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" onclick='deleteHistory("${row.id}")'><i class="bi bi-trash"></i></button>
-               </div>
+            <div class="history-actions">
+               <button class="btn btn-sm btn-light border" onclick='updatePayment("${row.id}")'>Pay</button>
+               <button class="btn btn-sm btn-light border" onclick='reprintHistory("${row.id}")'><i class="bi bi-printer"></i></button>
+               <button class="btn btn-sm btn-light border text-danger" onclick='deleteHistory("${row.id}")'><i class="bi bi-trash"></i></button>
             </div>
           `;
           list.appendChild(div);
@@ -287,33 +358,31 @@
     }
 
     async function updatePayment(id) {
-       const newAdvance = prompt("Enter NEW Total Advance Amount:");
-       if(newAdvance === null) return;
-       
-       showToast("Updating...", "default");
+       const newAdv = prompt("Enter NEW TOTAL Advance Amount:");
+       if(newAdv === null) return;
+       showToast("Updating...");
        try {
-         const res = await callApi({ action: 'UPDATE_PAYMENT', id: id, advance: newAdvance });
-         if(res.success) { showToast("Updated"); fetchHistory(); }
-         else { showToast("Error", 'error'); }
-       } catch(e) { showToast("Failed", 'error'); }
+         const res = await callApi({ action: 'UPDATE_PAYMENT', id: id, advance: newAdv });
+         if(res.success) { showToast("Updated"); fetchHistory(); } else { showToast("Error", "error"); }
+       } catch(e) { showToast("Failed", "error"); }
     }
 
     async function deleteHistory(id) {
-      if(!confirm("Delete " + id + "?")) return;
-      showToast("Deleting...", "default");
-      try { const res = await callApi({ action: 'DELETE', id: id }); if (res.success) { showToast("Deleted"); fetchHistory(); } else { showToast("Failed", 'error'); } }
-      catch(e) { showToast("Failed", 'error'); }
+       if(!confirm("Delete " + id + "?")) return;
+       showToast("Deleting...");
+       try { const res = await callApi({ action: 'DELETE', id: id }); if(res.success){ showToast("Deleted"); fetchHistory();} } catch(e){}
     }
     
     function reprintHistory(id) { const record = historyCache.find(r => r.id === id); if (record) { const data = JSON.parse(record.jsonData); data.invoiceId = id; printInvoice(data); } }
     function filterHistory() { const term = document.getElementById('searchInput').value.toLowerCase(); const cards = document.querySelectorAll('.history-card'); cards.forEach(c => c.style.display = c.innerText.toLowerCase().includes(term) ? '' : 'none'); }
-    function showToast(msg, type='success') { const t=document.getElementById('toast-msg'); document.getElementById('toast-text').innerText=msg; document.getElementById('toast-icon').innerHTML=type==='success'?'<i class="bi bi-check-circle-fill"></i>':'<i class="bi bi-exclamation-circle-fill"></i>'; t.className=`custom-toast ${type} show`; setTimeout(()=>t.classList.remove('show'),3000); }
+    function showToast(msg, type) { const t=document.getElementById('toast-msg'); t.innerText=msg; t.className=`custom-toast show ${type}`; setTimeout(()=>t.classList.remove('show'),3000); }
     function generatePreview() { const data = getFormData(); data.invoiceId = "PREVIEW"; printInvoice(data); }
 
     function printInvoice(data) {
       const area = document.getElementById('printable-area');
-      // Calculate numeric values for safety
-      const total = parseFloat(String(data.grandTotal).replace(/,/g,''));
+      // Formatting numbers
+      const totalStr = String(data.grandTotal).replace(/,/g,'');
+      const total = parseFloat(totalStr);
       const adv = parseFloat(data.advance) || 0;
       const rem = parseFloat(data.remaining) || (total - adv);
 
@@ -331,7 +400,7 @@
       data.events.forEach(evt => {
         html += `
           <div class="event-section">
-             <strong>${evt.eventName}</strong> <small>(${evt.eventDate})</small>
+             <strong>${evt.eventName}</strong> <span style="color:#555; font-size:0.9em">(${evt.eventDate})</span>
              <table class="print-table">
                <thead><tr><th width="50%">Item</th><th width="15%" class="text-center">Qty</th><th width="20%" class="text-end">Rate</th><th width="15%" class="text-end">Amt</th></tr></thead>
                <tbody>
@@ -346,14 +415,13 @@
       });
 
       html += `
-        <div class="totals-grid">
-           <div class="totals-box">
-              <div class="total-row"><span>Total:</span> <span>₹${total.toLocaleString('en-IN', {minimumFractionDigits:2})}</span></div>
-              <div class="total-row"><span>Advance:</span> <span>₹${adv.toLocaleString('en-IN', {minimumFractionDigits:2})}</span></div>
-              <div class="total-row grand"><span>Balance:</span> <span>₹${rem.toLocaleString('en-IN', {minimumFractionDigits:2})}</span></div>
-           </div>
+        <div class="totals-section">
+           <table class="totals-table">
+              <tr><td>Total Amount:</td><td style="font-weight:600">₹${total.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
+              <tr><td>Advance Paid:</td><td>₹${adv.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
+              <tr><td class="grand-total">Balance Due:</td><td class="grand-total">₹${rem.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
+           </table>
         </div>
-        
         <div class="disclaimer">
            <strong>Disclaimer:</strong> While Pranima Event Management strives for perfection, we are not liable for service interruptions caused by technical failures, power outages, weather conditions, or equipment malfunctions beyond our direct control. Any refunds or adjustments related to such issues will be at the sole discretion of management.
         </div>
