@@ -4,15 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pranima Management</title>
-  
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#111111">
   <link rel="apple-touch-icon" href="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg">
-
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-
   <style>
     :root { --primary: #111; --secondary: #666; --bg-color: #f4f6f8; --card-bg: #ffffff; }
     body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--primary); padding-bottom: 60px; }
@@ -21,137 +18,38 @@
     .main-container { max-width: 950px; margin: 40px auto; background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); padding: 40px; }
     .nav-pills .nav-link { color: var(--secondary); border-radius: 8px; font-weight: 500; }
     .nav-pills .nav-link.active { background-color: var(--primary); color: #fff; }
-    .form-label { font-size: 0.85rem; font-weight: 600; color: var(--secondary); text-transform: uppercase; }
     .form-control, .form-select { border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
     .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
     .event-block { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 25px; margin-bottom: 25px; position: relative; }
     .delete-event-btn { position: absolute; top: 15px; right: 15px; color: #dc3545; border: none; background: none; font-size: 1.2rem; cursor: pointer; }
     .equipment-row { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #eee; }
-    
-    /* Install Button */
     #installBtn { display: none; }
-    
-    /* Toast */
     #toast-overlay { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 9999; pointer-events: none; }
     .custom-toast { background: #333; color: #fff; padding: 12px 24px; border-radius: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; opacity: 0; transition: 0.3s; transform: translateY(20px); }
     .custom-toast.show { opacity: 1; transform: translateY(0); }
     .custom-toast.error { background: #dc3545; }
-
-    /* --- STRICT SINGLE PAGE PRINT CSS --- */
     #printable-area { display: none; }
-    
     @media print {
-      /* Force single page feel */
-      @page { 
-        size: A4; /* Or 'auto' if you use roll paper */
-        margin: 0.8cm; /* Very tight margins to fit more */
-      }
-      
-      body, html { 
-        height: 100%; 
-        width: 100%;
-        margin: 0; 
-        padding: 0;
-        background-color: white; 
-      }
-
-      /* Hide App UI */
+      @page { size: A4; margin: 0.8cm; }
+      body, html { height: 100%; width: 100%; margin: 0; background-color: white; }
       .main-container, .nav, .btn, #toast-overlay, #installContainer { display: none !important; }
-
-      /* Show Print Area */
-      #printable-area { 
-        display: block !important; 
-        position: absolute; 
-        top: 0; left: 0; 
-        width: 100%; 
-        visibility: visible !important; 
-        font-family: 'Inter', sans-serif;
-        font-size: 12px; /* Smaller font to fit more */
-        color: #000;
-      }
-      
-      /* Header Layout */
-      .print-header { 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        margin-bottom: 20px; 
-        border-bottom: 2px solid #000; 
-        padding-bottom: 15px; 
-      }
-      .print-logo { 
-        width: 90px; /* Smaller logo for print */
-        height: auto; 
-      }
-      .print-title { 
-        font-size: 1.8rem; 
-        font-family: 'Playfair Display'; 
-        font-weight: 700; 
-        text-transform: uppercase; 
-        margin: 0;
-      }
-      .print-meta { 
-        text-align: right; 
-        font-size: 0.85rem; 
-        line-height: 1.3; 
-      }
-
-      /* Compact Customer Section */
-      .print-customer { 
-        margin-bottom: 20px; 
-        padding: 10px; 
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        background-color: #fcfcfc !important; 
-        -webkit-print-color-adjust: exact; 
-      }
-
-      /* Compact Tables */
-      .event-section { 
-        margin-bottom: 15px; 
-        page-break-inside: avoid; /* Don't split events across pages */
-      }
-      .print-table { 
-        width: 100%; 
-        border-collapse: collapse; 
-        font-size: 0.9rem; 
-      }
-      .print-table th { 
-        text-align: left; 
-        border-bottom: 1px solid #000; 
-        padding: 4px 0; /* Tighter padding */
-        font-weight: 700; 
-      }
-      .print-table td { 
-        padding: 4px 0; /* Tighter padding */
-        border-bottom: 1px solid #eee; 
-      }
-      
-      /* Footer & Total */
-      .print-total { 
-        text-align: right; 
-        font-size: 1.4rem; 
-        font-weight: 700; 
-        margin-top: 15px; 
-        border-top: 2px solid #000; 
-        padding-top: 10px; 
-        page-break-inside: avoid;
-      }
-      .print-footer { 
-        margin-top: 30px; 
-        text-align: center; 
-        font-size: 0.75rem; 
-        color: #666; 
-        border-top: 1px solid #eee; 
-        padding-top: 10px; 
-      }
+      #printable-area { display: block !important; position: absolute; top: 0; left: 0; width: 100%; visibility: visible !important; font-family: 'Inter', sans-serif; font-size: 12px; color: #000; }
+      .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 15px; }
+      .print-logo { width: 90px; height: auto; }
+      .print-title { font-size: 1.8rem; font-family: 'Playfair Display'; font-weight: 700; text-transform: uppercase; margin: 0; }
+      .print-meta { text-align: right; font-size: 0.85rem; line-height: 1.3; }
+      .print-customer { margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; background-color: #fcfcfc !important; -webkit-print-color-adjust: exact; }
+      .event-section { margin-bottom: 15px; page-break-inside: avoid; }
+      .print-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+      .print-table th { text-align: left; border-bottom: 1px solid #000; padding: 4px 0; font-weight: 700; }
+      .print-table td { padding: 4px 0; border-bottom: 1px solid #eee; }
+      .print-total { text-align: right; font-size: 1.4rem; font-weight: 700; margin-top: 15px; border-top: 2px solid #000; padding-top: 10px; }
+      .print-footer { margin-top: 30px; text-align: center; font-size: 0.75rem; color: #666; border-top: 1px solid #eee; padding-top: 10px; }
     }
   </style>
 </head>
 <body>
-
   <div id="toast-overlay"><div id="toast-msg" class="custom-toast"><span id="toast-icon"></span><span id="toast-text"></span></div></div>
-
   <div class="main-container">
     <div class="text-center mb-5">
       <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" alt="Logo" style="height: 100px; margin-bottom: 15px;">
@@ -159,32 +57,16 @@
       <p class="text-muted">Invoice & Estimate Generator</p>
       <div id="installContainer" class="mt-2"><button id="installBtn" class="btn btn-sm btn-outline-dark rounded-pill"><i class="bi bi-download me-1"></i> Install App</button></div>
     </div>
-
     <ul class="nav nav-pills nav-fill mb-4 gap-2">
       <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-generator"><i class="bi bi-file-earmark-plus me-2"></i>New Invoice</button></li>
       <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-history" onclick="fetchHistory()"><i class="bi bi-clock-history me-2"></i>History</button></li>
     </ul>
-
     <div class="tab-content">
       <div class="tab-pane fade show active" id="tab-generator">
         <form id="mainForm" onsubmit="event.preventDefault(); saveRecord();">
           <div class="row g-4 mb-4">
-            <div class="col-md-6">
-              <label class="form-label">Customer Details</label>
-              <input type="text" class="form-control mb-2" id="custName" placeholder="Full Name" required>
-              <input type="tel" class="form-control" id="custPhone" placeholder="Mobile Number" required>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Document Details</label>
-              <div class="d-flex gap-2 mb-2">
-                <select class="form-select" id="docType">
-                  <option value="Estimate">Estimate</option>
-                  <option value="Invoice">Invoice</option>
-                </select>
-                <input type="date" class="form-control" id="docDate" required>
-              </div>
-              <div class="text-end text-muted small">ID generated automatically</div>
-            </div>
+            <div class="col-md-6"><label class="form-label">Customer Details</label><input type="text" class="form-control mb-2" id="custName" placeholder="Full Name" required><input type="tel" class="form-control" id="custPhone" placeholder="Mobile Number" required></div>
+            <div class="col-md-6"><label class="form-label">Document Details</label><div class="d-flex gap-2 mb-2"><select class="form-select" id="docType"><option value="Estimate">Estimate</option><option value="Invoice">Invoice</option></select><input type="date" class="form-control" id="docDate" required></div><div class="text-end text-muted small">ID generated automatically</div></div>
           </div>
           <hr class="text-muted opacity-25 my-4">
           <div id="events-container"></div>
@@ -196,7 +78,6 @@
           </div>
         </form>
       </div>
-
       <div class="tab-pane fade" id="tab-history">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <input type="text" id="searchInput" class="form-control w-50" placeholder="Search..." onkeyup="filterHistory()">
@@ -208,65 +89,44 @@
       </div>
     </div>
   </div>
-
   <div id="printable-area"></div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // ==========================================
-    // CONFIGURATION - PASTE YOUR APP SCRIPT URL HERE
+    // PASTE YOUR NEW WEB APP URL HERE
     // ==========================================
-    const API_URL = "https://script.google.com/macros/s/AKfycbxNlpWyMnnjr4a7MM9hRENEmOC1gKDZQsAPmZqFxOrjHimiXZvUOaiOexfvRiQ7yYso6w/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbwG77pYIOpoPti7g05G2BZyDjc_tm9i_7jND3hiPHNgFU2mo-JWPOLmtkE5xWDioLdb/exec"; 
     // ==========================================
 
-    // --- PWA REGISTRATION ---
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
-          .then(reg => console.log('Service Worker Registered'))
-          .catch(err => console.log('Service Worker Error:', err));
-      });
-    }
-
-    // --- INSTALL BUTTON ---
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('installBtn').style.display = 'inline-block';
-    });
-    document.getElementById('installBtn').addEventListener('click', () => {
-      document.getElementById('installBtn').style.display = 'none';
-      if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
-    });
-
-    // --- APP LOGIC ---
     let historyCache = [];
     document.getElementById('docDate').valueAsDate = new Date();
     addEventBlock();
 
+    // PWA & Install
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js').catch(console.error); }); }
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBtn').style.display = 'inline-block'; });
+    document.getElementById('installBtn').addEventListener('click', () => { document.getElementById('installBtn').style.display = 'none'; if(deferredPrompt) deferredPrompt.prompt(); });
+
+    // API
     async function callApi(payload) {
-      try {
-        const response = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
-        return await response.json();
-      } catch (error) { throw new Error("Connection failed."); }
+      // We use 'no-cors' workaround check. Actually, plain POST is best for JSON.
+      // If permissions are "Anyone", this fetch works perfectly.
+      const response = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      return await response.json();
     }
 
-    function showToast(msg, type = 'success') {
-      const toast = document.getElementById('toast-msg');
-      document.getElementById('toast-text').innerText = msg;
-      document.getElementById('toast-icon').innerHTML = type === 'success' ? '<i class="bi bi-check-circle-fill"></i>' : '<i class="bi bi-exclamation-circle-fill"></i>';
-      toast.className = `custom-toast ${type} show`;
-      setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-
+    // Calculations
     function calculateTotal() {
       let total = 0;
       document.querySelectorAll('.price-input').forEach(inp => total += parseFloat(inp.value) || 0);
       document.getElementById('displayTotal').innerText = total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-      return total;
     }
 
+    // UI Builders
     function addEventBlock() {
       const id = Date.now();
       const div = document.createElement('div');
@@ -276,7 +136,6 @@
       document.getElementById('events-container').appendChild(div);
       addItemRow(div.querySelector('.btn-link'));
     }
-
     function addItemRow(btn) {
       const list = btn.previousElementSibling;
       const id = Date.now() + Math.random();
@@ -287,7 +146,8 @@
       list.appendChild(div);
     }
     function removeEl(id) { document.getElementById(id).remove(); calculateTotal(); }
-
+    
+    // Actions
     function getFormData() {
       const data = {
         customerName: document.getElementById('custName').value,
@@ -299,9 +159,7 @@
       };
       document.querySelectorAll('.event-block').forEach(blk => {
         const evt = { eventName: blk.querySelector('.event-name').value, eventDate: blk.querySelector('.event-date').value, items: [] };
-        blk.querySelectorAll('.equipment-row').forEach(row => {
-          evt.items.push({ name: row.querySelector('.item-name').value, price: row.querySelector('.price-input').value });
-        });
+        blk.querySelectorAll('.equipment-row').forEach(row => { evt.items.push({ name: row.querySelector('.item-name').value, price: row.querySelector('.price-input').value }); });
         data.events.push(evt);
       });
       return data;
@@ -313,20 +171,28 @@
       const btnTxt = document.getElementById('saveBtnText');
       const spinner = document.getElementById('saveSpinner');
       btnTxt.innerText = "Saving..."; spinner.classList.remove('d-none');
+      
       try {
         const data = getFormData();
         const res = await callApi({ action: 'SAVE', data: data });
         btnTxt.innerText = "Save & Print"; spinner.classList.add('d-none');
         if (res.success) { showToast("Saved! ID: " + res.id); data.invoiceId = res.id; printInvoice(data); }
         else { showToast("Error: " + res.error, 'error'); }
-      } catch (err) { btnTxt.innerText = "Save & Print"; spinner.classList.add('d-none'); showToast(err.message, 'error'); }
+      } catch (err) {
+        btnTxt.innerText = "Save & Print"; spinner.classList.add('d-none');
+        showToast("Connection Failed. Check API URL.", 'error');
+        console.error(err);
+      }
     }
 
     async function fetchHistory() {
       const tbody = document.getElementById('historyBody');
       tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Loading...</td></tr>';
-      try { const data = await callApi({ action: 'GET_HISTORY' }); historyCache = data; renderHistory(data); }
-      catch (err) { tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-danger">${err.message}</td></tr>`; }
+      try {
+        const data = await callApi({ action: 'GET_HISTORY' });
+        historyCache = data;
+        renderHistory(data);
+      } catch (err) { tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-danger">Connection Failed.</td></tr>`; }
     }
 
     function renderHistory(data) {
@@ -344,68 +210,25 @@
       if(!confirm("Delete record " + id + "?")) return;
       showToast("Deleting...", "default");
       try { const res = await callApi({ action: 'DELETE', id: id }); if (res.success) { showToast("Deleted"); fetchHistory(); } else { showToast("Failed", 'error'); } }
-      catch(e) { showToast(e.message, 'error'); }
+      catch(e) { showToast("Connection Failed", 'error'); }
     }
-    
+
     function reprintHistory(id) { const record = historyCache.find(r => r.id === id); if (record) { const data = JSON.parse(record.jsonData); data.invoiceId = id; printInvoice(data); } }
     function filterHistory() { const term = document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('#historyBody tr').forEach(row => { row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none'; }); }
-
     function generatePreview() { const data = getFormData(); data.invoiceId = "PREVIEW"; printInvoice(data); }
-    
+    function showToast(msg, type='success') { const t=document.getElementById('toast-msg'); document.getElementById('toast-text').innerText=msg; document.getElementById('toast-icon').innerHTML=type==='success'?'<i class="bi bi-check-circle-fill"></i>':'<i class="bi bi-exclamation-circle-fill"></i>'; t.className=`custom-toast ${type} show`; setTimeout(()=>t.classList.remove('show'),3000); }
+
     function printInvoice(data) {
       const area = document.getElementById('printable-area');
-      // Compact Header with Logo
-      let html = `
-        <div class="print-header">
-           <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" class="print-logo">
-           <div class="text-end">
-              <div class="print-title">${data.type}</div>
-              <div class="print-meta">
-                 ID: ${data.invoiceId}<br>
-                 Date: ${data.issueDate}
-              </div>
-           </div>
-        </div>
-
-        <div class="print-customer">
-           <strong>Bill To:</strong><br>
-           ${data.customerName}<br>
-           ${data.customerPhone}
-        </div>
-      `;
-
-      // Compact Events Loop
+      let html = `<div class="print-header"><img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" class="print-logo"><div class="text-end"><div class="print-title">${data.type}</div><div class="print-meta">ID: ${data.invoiceId}<br>Date: ${data.issueDate}</div></div></div><div class="print-customer"><strong>Bill To:</strong><br>${data.customerName}<br>${data.customerPhone}</div>`;
       data.events.forEach(evt => {
-        html += `
-          <div class="event-section">
-             <strong>Event: ${evt.eventName}</strong> <span style="color:#666; font-size:0.9em; margin-left:10px;">(${evt.eventDate})</span>
-             <table class="print-table">
-               <thead><tr><th>Description</th><th style="text-align:right;">Amount</th></tr></thead>
-               <tbody>
-        `;
-        evt.items.forEach(item => {
-           const p = parseFloat(item.price).toLocaleString('en-IN', {minimumFractionDigits: 2});
-           html += `<tr><td>${item.name}</td><td style="text-align:right;">₹${p}</td></tr>`;
-        });
+        html += `<div class="event-section"><strong>Event: ${evt.eventName}</strong> <span style="color:#666; font-size:0.9em;">(${evt.eventDate})</span><table class="print-table"><thead><tr><th>Description</th><th style="text-align:right;">Amount</th></tr></thead><tbody>`;
+        evt.items.forEach(item => { html += `<tr><td>${item.name}</td><td style="text-align:right;">₹${parseFloat(item.price).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td></tr>`; });
         html += `</tbody></table></div>`;
       });
-
-      // Footer
-      html += `
-        <div class="print-total">
-           Total: ₹${data.grandTotal}
-        </div>
-        <div class="print-footer">
-           Thank you for choosing Pranima Event Management!
-        </div>
-      `;
-
+      html += `<div class="print-total">Total: ₹${data.grandTotal}</div><div class="print-footer">Thank you for choosing Pranima Event Management!</div>`;
       area.innerHTML = html;
-      
-      // Delay slightly for images to load before prompting print
-      setTimeout(() => {
-        window.print();
-      }, 500);
+      setTimeout(() => window.print(), 500);
     }
   </script>
 </body>
