@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pranima-v5-style-revert'; // Bump version
+const CACHE_NAME = 'pranima-v6-modal-update';
 
 const ASSETS = [
   './',
