@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,7 +29,7 @@
     .equipment-row { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #eee; }
     
     /* Install Button */
-    #installBtn { display: none; } /* Hidden by default */
+    #installBtn { display: none; }
     
     /* Toast */
     #toast-overlay { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 9999; pointer-events: none; }
@@ -38,23 +37,114 @@
     .custom-toast.show { opacity: 1; transform: translateY(0); }
     .custom-toast.error { background: #dc3545; }
 
-    /* Print */
+    /* --- STRICT SINGLE PAGE PRINT CSS --- */
     #printable-area { display: none; }
+    
     @media print {
-      body * { visibility: hidden; height: 0; overflow: hidden; }
+      /* Force single page feel */
+      @page { 
+        size: A4; /* Or 'auto' if you use roll paper */
+        margin: 0.8cm; /* Very tight margins to fit more */
+      }
+      
+      body, html { 
+        height: 100%; 
+        width: 100%;
+        margin: 0; 
+        padding: 0;
+        background-color: white; 
+      }
+
+      /* Hide App UI */
       .main-container, .nav, .btn, #toast-overlay, #installContainer { display: none !important; }
-      #printable-area { display: block !important; position: absolute; top: 0; left: 0; width: 100%; height: auto; visibility: visible !important; overflow: visible !important; background: white; padding: 40px; }
-      #printable-area * { visibility: visible !important; height: auto; }
-      .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 2px solid #000; padding-bottom: 20px; }
-      .print-logo { width: 120px; }
-      .print-title { font-size: 2rem; font-family: 'Playfair Display'; font-weight: 700; text-transform: uppercase; }
-      .print-meta { text-align: right; font-size: 0.9rem; line-height: 1.4; }
-      .print-customer { margin-bottom: 30px; background: #f9f9f9; padding: 15px; border-radius: 8px; -webkit-print-color-adjust: exact; }
-      .print-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.95rem; }
-      .print-table th { text-align: left; border-bottom: 1px solid #000; padding: 8px 0; font-weight: 700; }
-      .print-table td { padding: 8px 0; border-bottom: 1px solid #eee; }
-      .print-total { text-align: right; font-size: 1.5rem; font-weight: 700; margin-top: 20px; border-top: 2px solid #000; padding-top: 10px; }
-      .print-footer { margin-top: 50px; text-align: center; font-size: 0.8rem; color: #666; border-top: 1px solid #eee; padding-top: 20px; }
+
+      /* Show Print Area */
+      #printable-area { 
+        display: block !important; 
+        position: absolute; 
+        top: 0; left: 0; 
+        width: 100%; 
+        visibility: visible !important; 
+        font-family: 'Inter', sans-serif;
+        font-size: 12px; /* Smaller font to fit more */
+        color: #000;
+      }
+      
+      /* Header Layout */
+      .print-header { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        margin-bottom: 20px; 
+        border-bottom: 2px solid #000; 
+        padding-bottom: 15px; 
+      }
+      .print-logo { 
+        width: 90px; /* Smaller logo for print */
+        height: auto; 
+      }
+      .print-title { 
+        font-size: 1.8rem; 
+        font-family: 'Playfair Display'; 
+        font-weight: 700; 
+        text-transform: uppercase; 
+        margin: 0;
+      }
+      .print-meta { 
+        text-align: right; 
+        font-size: 0.85rem; 
+        line-height: 1.3; 
+      }
+
+      /* Compact Customer Section */
+      .print-customer { 
+        margin-bottom: 20px; 
+        padding: 10px; 
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fcfcfc !important; 
+        -webkit-print-color-adjust: exact; 
+      }
+
+      /* Compact Tables */
+      .event-section { 
+        margin-bottom: 15px; 
+        page-break-inside: avoid; /* Don't split events across pages */
+      }
+      .print-table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        font-size: 0.9rem; 
+      }
+      .print-table th { 
+        text-align: left; 
+        border-bottom: 1px solid #000; 
+        padding: 4px 0; /* Tighter padding */
+        font-weight: 700; 
+      }
+      .print-table td { 
+        padding: 4px 0; /* Tighter padding */
+        border-bottom: 1px solid #eee; 
+      }
+      
+      /* Footer & Total */
+      .print-total { 
+        text-align: right; 
+        font-size: 1.4rem; 
+        font-weight: 700; 
+        margin-top: 15px; 
+        border-top: 2px solid #000; 
+        padding-top: 10px; 
+        page-break-inside: avoid;
+      }
+      .print-footer { 
+        margin-top: 30px; 
+        text-align: center; 
+        font-size: 0.75rem; 
+        color: #666; 
+        border-top: 1px solid #eee; 
+        padding-top: 10px; 
+      }
     }
   </style>
 </head>
@@ -124,7 +214,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // ==========================================
-    // CONFIGURATION
+    // CONFIGURATION - PASTE YOUR APP SCRIPT URL HERE
     // ==========================================
     const API_URL = "YOUR_GOOGLE_SCRIPT_WEB_APP_URL_GOES_HERE"; 
     // ==========================================
@@ -138,28 +228,19 @@
       });
     }
 
-    // --- INSTALL BUTTON LOGIC ---
+    // --- INSTALL BUTTON ---
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
       document.getElementById('installBtn').style.display = 'inline-block';
     });
-
     document.getElementById('installBtn').addEventListener('click', () => {
       document.getElementById('installBtn').style.display = 'none';
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('User accepted the A2HS prompt');
-          }
-          deferredPrompt = null;
-        });
-      }
+      if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
     });
 
-    // --- APP LOGIC (Same as before) ---
+    // --- APP LOGIC ---
     let historyCache = [];
     document.getElementById('docDate').valueAsDate = new Date();
     addEventBlock();
@@ -270,17 +351,61 @@
     function filterHistory() { const term = document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('#historyBody tr').forEach(row => { row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none'; }); }
 
     function generatePreview() { const data = getFormData(); data.invoiceId = "PREVIEW"; printInvoice(data); }
+    
     function printInvoice(data) {
       const area = document.getElementById('printable-area');
-      let html = `<div class="print-header"><img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" class="print-logo"><div class="text-end"><div class="print-title">${data.type}</div><div class="print-meta">ID: ${data.invoiceId}<br>Date: ${data.issueDate}</div></div></div><div class="print-customer"><strong>Bill To:</strong><br>${data.customerName}<br>${data.customerPhone}</div>`;
+      // Compact Header with Logo
+      let html = `
+        <div class="print-header">
+           <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" class="print-logo">
+           <div class="text-end">
+              <div class="print-title">${data.type}</div>
+              <div class="print-meta">
+                 ID: ${data.invoiceId}<br>
+                 Date: ${data.issueDate}
+              </div>
+           </div>
+        </div>
+
+        <div class="print-customer">
+           <strong>Bill To:</strong><br>
+           ${data.customerName}<br>
+           ${data.customerPhone}
+        </div>
+      `;
+
+      // Compact Events Loop
       data.events.forEach(evt => {
-        html += `<div style="margin-bottom: 25px;"><strong>Event: ${evt.eventName}</strong> <span style="color:#666; font-size:0.9em;">(${evt.eventDate})</span><table class="print-table"><thead><tr><th>Description</th><th style="text-align:right;">Amount</th></tr></thead><tbody>`;
-        evt.items.forEach(item => { html += `<tr><td>${item.name}</td><td style="text-align:right;">₹${parseFloat(item.price).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td></tr>`; });
+        html += `
+          <div class="event-section">
+             <strong>Event: ${evt.eventName}</strong> <span style="color:#666; font-size:0.9em; margin-left:10px;">(${evt.eventDate})</span>
+             <table class="print-table">
+               <thead><tr><th>Description</th><th style="text-align:right;">Amount</th></tr></thead>
+               <tbody>
+        `;
+        evt.items.forEach(item => {
+           const p = parseFloat(item.price).toLocaleString('en-IN', {minimumFractionDigits: 2});
+           html += `<tr><td>${item.name}</td><td style="text-align:right;">₹${p}</td></tr>`;
+        });
         html += `</tbody></table></div>`;
       });
-      html += `<div class="print-total">Total: ₹${data.grandTotal}</div><div class="print-footer">Thank you for choosing Pranima Event Management!</div>`;
+
+      // Footer
+      html += `
+        <div class="print-total">
+           Total: ₹${data.grandTotal}
+        </div>
+        <div class="print-footer">
+           Thank you for choosing Pranima Event Management!
+        </div>
+      `;
+
       area.innerHTML = html;
-      setTimeout(() => window.print(), 500);
+      
+      // Delay slightly for images to load before prompting print
+      setTimeout(() => {
+        window.print();
+      }, 500);
     }
   </script>
 </body>
