@@ -1,5 +1,5 @@
-// Change V3 to V4, V5 etc when you make updates to force users to get new code
-const CACHE_NAME = 'pranima-v3-payment-update';
+
+const CACHE_NAME = 'pranima-v4-ui-cleanup';
 
 const ASSETS = [
   './',
@@ -12,26 +12,15 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
-  self.skipWaiting(); // Force this worker to become active immediately
+  self.skipWaiting();
   e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
 });
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) return caches.delete(key);
-        })
-      );
-    })
-  );
-  return self.clients.claim(); // Take control of all pages immediately
+  e.waitUntil(caches.keys().then((keys) => Promise.all(keys.map((key) => { if (key !== CACHE_NAME) return caches.delete(key); }))));
+  return self.clients.claim();
 });
 
 self.addEventListener('fetch', (e) => {
-  // Network First, Fallback to Cache strategy (Ensures fresh data if online)
-  e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request))
-  );
+  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
 });
