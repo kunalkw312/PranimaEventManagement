@@ -4,12 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pranima Management</title>
+  
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#111111">
   <link rel="apple-touch-icon" href="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg">
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
   <style>
     :root { --primary: #111; --secondary: #666; --bg-color: #f4f6f8; --card-bg: #ffffff; }
     body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--primary); padding-bottom: 60px; }
@@ -23,11 +26,17 @@
     .event-block { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 25px; margin-bottom: 25px; position: relative; }
     .delete-event-btn { position: absolute; top: 15px; right: 15px; color: #dc3545; border: none; background: none; font-size: 1.2rem; cursor: pointer; }
     .equipment-row { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #eee; }
+    
+    /* Install Button */
     #installBtn { display: none; }
+    
+    /* Toast */
     #toast-overlay { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 9999; pointer-events: none; }
     .custom-toast { background: #333; color: #fff; padding: 12px 24px; border-radius: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; opacity: 0; transition: 0.3s; transform: translateY(20px); }
     .custom-toast.show { opacity: 1; transform: translateY(0); }
     .custom-toast.error { background: #dc3545; }
+
+    /* Print CSS */
     #printable-area { display: none; }
     @media print {
       @page { size: A4; margin: 0.8cm; }
@@ -49,7 +58,9 @@
   </style>
 </head>
 <body>
+
   <div id="toast-overlay"><div id="toast-msg" class="custom-toast"><span id="toast-icon"></span><span id="toast-text"></span></div></div>
+
   <div class="main-container">
     <div class="text-center mb-5">
       <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" alt="Logo" style="height: 100px; margin-bottom: 15px;">
@@ -57,16 +68,32 @@
       <p class="text-muted">Invoice & Estimate Generator</p>
       <div id="installContainer" class="mt-2"><button id="installBtn" class="btn btn-sm btn-outline-dark rounded-pill"><i class="bi bi-download me-1"></i> Install App</button></div>
     </div>
+
     <ul class="nav nav-pills nav-fill mb-4 gap-2">
       <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-generator"><i class="bi bi-file-earmark-plus me-2"></i>New Invoice</button></li>
       <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-history" onclick="fetchHistory()"><i class="bi bi-clock-history me-2"></i>History</button></li>
     </ul>
+
     <div class="tab-content">
       <div class="tab-pane fade show active" id="tab-generator">
         <form id="mainForm" onsubmit="event.preventDefault(); saveRecord();">
           <div class="row g-4 mb-4">
-            <div class="col-md-6"><label class="form-label">Customer Details</label><input type="text" class="form-control mb-2" id="custName" placeholder="Full Name" required><input type="tel" class="form-control" id="custPhone" placeholder="Mobile Number" required></div>
-            <div class="col-md-6"><label class="form-label">Document Details</label><div class="d-flex gap-2 mb-2"><select class="form-select" id="docType"><option value="Estimate">Estimate</option><option value="Invoice">Invoice</option></select><input type="date" class="form-control" id="docDate" required></div><div class="text-end text-muted small">ID generated automatically</div></div>
+            <div class="col-md-6">
+              <label class="form-label">Customer Details</label>
+              <input type="text" class="form-control mb-2" id="custName" placeholder="Full Name" required>
+              <input type="tel" class="form-control" id="custPhone" placeholder="Mobile Number" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Document Details</label>
+              <div class="d-flex gap-2 mb-2">
+                <select class="form-select" id="docType">
+                  <option value="Estimate">Estimate</option>
+                  <option value="Invoice">Invoice</option>
+                </select>
+                <input type="date" class="form-control" id="docDate" required>
+              </div>
+              <div class="text-end text-muted small">ID generated automatically</div>
+            </div>
           </div>
           <hr class="text-muted opacity-25 my-4">
           <div id="events-container"></div>
@@ -78,6 +105,7 @@
           </div>
         </form>
       </div>
+
       <div class="tab-pane fade" id="tab-history">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <input type="text" id="searchInput" class="form-control w-50" placeholder="Search..." onkeyup="filterHistory()">
@@ -89,11 +117,13 @@
       </div>
     </div>
   </div>
+
   <div id="printable-area"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // ==========================================
-    // PASTE YOUR NEW WEB APP URL HERE
+    // PASTE YOUR GOOGLE WEB APP URL HERE
     // ==========================================
     const API_URL = "https://script.google.com/macros/s/AKfycbwG77pYIOpoPti7g05G2BZyDjc_tm9i_7jND3hiPHNgFU2mo-JWPOLmtkE5xWDioLdb/exec"; 
     // ==========================================
@@ -108,13 +138,15 @@
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBtn').style.display = 'inline-block'; });
     document.getElementById('installBtn').addEventListener('click', () => { document.getElementById('installBtn').style.display = 'none'; if(deferredPrompt) deferredPrompt.prompt(); });
 
-    // API
+    // --- THE FIXED API CALL ---
+    // This function now uses 'text/plain' to prevent CORS errors.
     async function callApi(payload) {
-      // We use 'no-cors' workaround check. Actually, plain POST is best for JSON.
-      // If permissions are "Anyone", this fetch works perfectly.
       const response = await fetch(API_URL, {
         method: "POST",
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8", // <--- THE KEY FIX
+        },
       });
       return await response.json();
     }
