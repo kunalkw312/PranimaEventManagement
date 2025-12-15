@@ -1,5 +1,7 @@
-const CACHE_NAME = 'pranima-v2-force-update';
-const ASSETS_TO_CACHE = [
+// Change V3 to V4, V5 etc when you make updates to force users to get new code
+const CACHE_NAME = 'pranima-v3-payment-update';
+
+const ASSETS = [
   './',
   './index.html',
   './manifest.json',
@@ -9,35 +11,27 @@ const ASSETS_TO_CACHE = [
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap'
 ];
 
-// Install Service Worker
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
-  );
+self.addEventListener('install', (e) => {
+  self.skipWaiting(); // Force this worker to become active immediately
+  e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
 });
 
-// Activate Service Worker
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
       return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
+        keys.map((key) => {
+          if (key !== CACHE_NAME) return caches.delete(key);
         })
       );
     })
   );
+  return self.clients.claim(); // Take control of all pages immediately
 });
 
-// Fetch Assets
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
+self.addEventListener('fetch', (e) => {
+  // Network First, Fallback to Cache strategy (Ensures fresh data if online)
+  e.respondWith(
+    fetch(e.request).catch(() => caches.match(e.request))
   );
 });
