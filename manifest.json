@@ -1,0 +1,21 @@
+{
+  "name": "Pranima Event Management",
+  "short_name": "Pranima",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111111",
+  "description": "Invoice & Estimate Generator for Pranima Event Management",
+  "icons": [
+    {
+      "src": "https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
