@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pranima Management</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+  <style>
+    :root {
+      --primary: #111;
+      --secondary: #666;
+      --bg-color: #f4f6f8;
+      --card-bg: #ffffff;
+      --border-color: #eee;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--primary);
+      padding-bottom: 60px;
+    }
+
+    /* --- Typography & Branding --- */
+    h1, h2, h3, h4 { font-weight: 700; color: var(--primary); }
+    .brand-font { font-family: 'Playfair Display', serif; letter-spacing: 1px; }
+
+    /* --- Container & Cards --- */
+    .main-container {
+      max-width: 950px;
+      margin: 40px auto;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+      padding: 40px;
+      overflow: hidden;
+    }
+
+    /* --- Tabs --- */
+    .nav-pills .nav-link {
+      color: var(--secondary);
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .nav-pills .nav-link.active {
+      background-color: var(--primary);
+      color: #fff;
+    }
+
+    /* --- Forms --- */
+    .form-label { font-size: 0.85rem; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-control, .form-select {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.95rem;
+    }
+    .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+
+    /* --- Event Blocks --- */
+    .event-block {
+      background: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 25px;
+      position: relative;
+    }
+    .delete-event-btn {
+      position: absolute; top: 15px; right: 15px;
+      color: #dc3545; border: none; background: none; font-size: 1.2rem;
+      cursor: pointer; opacity: 0.7; transition: 0.2s;
+    }
+    .delete-event-btn:hover { opacity: 1; transform: scale(1.1); }
+
+    .equipment-row {
+      display: flex; align-items: center; gap: 15px; margin-bottom: 12px;
+      padding-bottom: 12px; border-bottom: 1px dashed #eee;
+    }
+    .equipment-row:last-child { border-bottom: none; }
+
+    /* --- Toast Notification --- */
+    #toast-overlay {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+      z-index: 9999; pointer-events: none;
+    }
+    .custom-toast {
+      background: #333; color: #fff; padding: 12px 24px; border-radius: 50px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2); font-weight: 500;
+      display: flex; align-items: center; gap: 10px;
+      opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: translateY(20px);
+    }
+    .custom-toast.show { opacity: 1; transform: translateY(0); }
+    .custom-toast.success { background: #198754; }
+    .custom-toast.error { background: #dc3545; }
+
+    /* --- History Table --- */
+    .table-hover tbody tr:hover { background-color: #f9f9f9; }
+    .btn-icon { border: none; background: transparent; padding: 5px; transition: 0.2s; }
+    .btn-icon:hover { background: #eee; border-radius: 50%; }
+
+    /* --- PRINT CSS (The Fix) --- */
+    #printable-area { display: none; } /* Hidden normally */
+    
+    @media print {
+      body * { visibility: hidden; height: 0; overflow: hidden; } /* Hide everything */
+      .main-container, .nav, .btn { display: none !important; }
+      
+      #printable-area {
+        display: block !important;
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%;
+        height: auto;
+        visibility: visible !important;
+        overflow: visible !important;
+        background: white;
+        padding: 40px;
+      }
+      #printable-area * { visibility: visible !important; height: auto; }
+      
+      /* Print Styling */
+      .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 2px solid #000; padding-bottom: 20px; }
+      .print-logo { width: 120px; }
+      .print-title { font-size: 2rem; font-family: 'Playfair Display'; font-weight: 700; text-transform: uppercase; }
+      .print-meta { text-align: right; font-size: 0.9rem; line-height: 1.4; }
+      .print-customer { margin-bottom: 30px; background: #f9f9f9; padding: 15px; border-radius: 8px; -webkit-print-color-adjust: exact; }
+      .print-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.95rem; }
+      .print-table th { text-align: left; border-bottom: 1px solid #000; padding: 8px 0; font-weight: 700; }
+      .print-table td { padding: 8px 0; border-bottom: 1px solid #eee; }
+      .print-total { text-align: right; font-size: 1.5rem; font-weight: 700; margin-top: 20px; border-top: 2px solid #000; padding-top: 10px; }
+      .print-footer { margin-top: 50px; text-align: center; font-size: 0.8rem; color: #666; border-top: 1px solid #eee; padding-top: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toast-overlay">
+    <div id="toast-msg" class="custom-toast">
+      <span id="toast-icon"></span>
+      <span id="toast-text">Action Successful</span>
+    </div>
+  </div>
+
+  <div class="main-container">
+    
+    <div class="text-center mb-5">
+      <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" alt="Pranima Logo" style="height: 90px; margin-bottom: 15px;">
+      <h2 class="brand-font">Pranima Event Management</h2>
+      <p class="text-muted">Invoice & Estimate Generator</p>
+    </div>
+
+    <ul class="nav nav-pills nav-fill mb-4 gap-2" role="tablist">
+      <li class="nav-item">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-generator" type="button">
+          <i class="bi bi-file-earmark-plus me-2"></i>New Invoice
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-history" type="button" onclick="loadHistory()">
+          <i class="bi bi-clock-history me-2"></i>History
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      
+      <div class="tab-pane fade show active" id="tab-generator">
+        <form id="mainForm" onsubmit="event.preventDefault(); saveRecord();">
+          
+          <div class="row g-4 mb-4">
+            <div class="col-md-6">
+              <label class="form-label">Customer Details</label>
+              <input type="text" class="form-control mb-2" id="custName" placeholder="Full Name" required>
+              <input type="tel" class="form-control" id="custPhone" placeholder="Mobile Number" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Document Details</label>
+              <div class="d-flex gap-2 mb-2">
+                <select class="form-select" id="docType">
+                  <option value="Estimate">Estimate</option>
+                  <option value="Invoice">Invoice</option>
+                </select>
+                <input type="date" class="form-control" id="docDate" required>
+              </div>
+              <div class="text-end text-muted small" id="docIdDisplay">ID will generate on save</div>
+            </div>
+          </div>
+
+          <hr class="text-muted opacity-25 my-4">
+
+          <div id="events-container">
+            </div>
+
+          <button type="button" class="btn btn-outline-dark w-100 py-2 mb-4 dashed-border" onclick="addEventBlock()">
+            <i class="bi bi-plus-circle me-1"></i> Add Another Event
+          </button>
+
+          <div class="bg-light p-4 rounded-3 text-end">
+            <h5 class="text-muted mb-1">Grand Total</h5>
+            <h2 class="display-6 fw-bold">₹ <span id="displayTotal">0.00</span></h2>
+          </div>
+
+          <div class="d-flex justify-content-end gap-3 mt-4">
+             <button type="button" class="btn btn-lg btn-secondary" onclick="generatePreview(true)">
+               <i class="bi bi-printer me-2"></i> Print Only
+             </button>
+             <button type="submit" class="btn btn-lg btn-dark px-5">
+               <span id="saveBtnText">Save & Print</span>
+               <span id="saveSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span>
+             </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="tab-pane fade" id="tab-history">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <input type="text" id="searchInput" class="form-control w-50" placeholder="Search..." onkeyup="filterHistory()">
+          <button class="btn btn-sm btn-outline-secondary" onclick="loadHistory()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Date</th>
+                <th>Details</th>
+                <th>Total</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody">
+              <tr><td colspan="4" class="text-center py-4">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="printable-area"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // --- GLOBAL STATE ---
+    let historyCache = [];
+    document.getElementById('docDate').valueAsDate = new Date();
+    addEventBlock(); // Init with one block
+
+    // --- UI HELPERS ---
+    
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast-msg');
+      const icon = document.getElementById('toast-icon');
+      const text = document.getElementById('toast-text');
+      
+      toast.className = `custom-toast ${type} show`;
+      text.innerText = msg;
+      icon.innerHTML = type === 'success' ? '<i class="bi bi-check-circle-fill"></i>' : '<i class="bi bi-exclamation-circle-fill"></i>';
+      
+      setTimeout(() => { toast.classList.remove('show'); }, 3000);
+    }
+
+    function calculateTotal() {
+      let total = 0;
+      document.querySelectorAll('.price-input').forEach(inp => {
+        total += parseFloat(inp.value) || 0;
+      });
+      document.getElementById('displayTotal').innerText = total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      return total;
+    }
+
+    // --- DOM MANIPULATION ---
+
+    function addEventBlock() {
+      const id = Date.now();
+      const div = document.createElement('div');
+      div.className = 'event-block';
+      div.id = `evt-${id}`;
+      div.innerHTML = `
+        <button type="button" class="delete-event-btn" onclick="removeEl('evt-${id}')"><i class="bi bi-trash"></i></button>
+        <div class="row g-3 mb-3">
+          <div class="col-md-8">
+            <label class="form-label">Event Name</label>
+            <input type="text" class="form-control event-name" placeholder="e.g. Wedding Reception" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-control event-date" required>
+          </div>
+        </div>
+        <div class="items-list"></div>
+        <button type="button" class="btn btn-sm btn-link text-decoration-none mt-2 ps-0" onclick="addItemRow(this)">+ Add Equipment/Service</button>
+      `;
+      document.getElementById('events-container').appendChild(div);
+      addItemRow(div.querySelector('.btn-link')); // Add first item
+    }
+
+    function addItemRow(btn) {
+      const list = btn.previousElementSibling;
+      const id = Date.now() + Math.random();
+      const div = document.createElement('div');
+      div.className = 'equipment-row';
+      div.id = `item-${id}`;
+      div.innerHTML = `
+        <div class="flex-grow-1">
+          <input type="text" class="form-control item-name" placeholder="Item Name" required>
+        </div>
+        <div style="width: 140px;">
+          <input type="number" class="form-control price-input text-end" placeholder="0.00" oninput="calculateTotal()" required>
+        </div>
+        <button type="button" class="btn-icon text-danger" onclick="removeEl('item-${id}')"><i class="bi bi-x-lg"></i></button>
+      `;
+      list.appendChild(div);
+    }
+
+    function removeEl(id) {
+      document.getElementById(id).remove();
+      calculateTotal();
+    }
+
+    // --- SAVE & PRINT LOGIC ---
+
+    function getFormData() {
+      const data = {
+        customerName: document.getElementById('custName').value,
+        customerPhone: document.getElementById('custPhone').value,
+        type: document.getElementById('docType').value,
+        issueDate: document.getElementById('docDate').value,
+        grandTotal: document.getElementById('displayTotal').innerText,
+        events: []
+      };
+
+      document.querySelectorAll('.event-block').forEach(blk => {
+        const evt = {
+          eventName: blk.querySelector('.event-name').value,
+          eventDate: blk.querySelector('.event-date').value,
+          items: []
+        };
+        blk.querySelectorAll('.equipment-row').forEach(row => {
+          evt.items.push({
+            name: row.querySelector('.item-name').value,
+            price: row.querySelector('.price-input').value
+          });
+        });
+        data.events.push(evt);
+      });
+      return data;
+    }
+
+    function saveRecord() {
+      const form = document.getElementById('mainForm');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      // Loading State
+      const btnTxt = document.getElementById('saveBtnText');
+      const spinner = document.getElementById('saveSpinner');
+      btnTxt.innerText = "Saving...";
+      spinner.classList.remove('d-none');
+
+      const data = getFormData();
+
+      google.script.run
+        .withSuccessHandler((res) => {
+           btnTxt.innerText = "Save & Print";
+           spinner.classList.add('d-none');
+           showToast("Saved! Invoice ID: " + res.id);
+           
+           // Inject ID into data and print
+           data.invoiceId = res.id;
+           printInvoice(data);
+        })
+        .withFailureHandler((err) => {
+           btnTxt.innerText = "Save & Print";
+           spinner.classList.add('d-none');
+           showToast("Error: " + err.message, 'error');
+        })
+        .saveToSheet(data);
+    }
+
+    function generatePreview() {
+      // Print without saving (generates temp ID)
+      const data = getFormData();
+      data.invoiceId = "PREVIEW ONLY";
+      printInvoice(data);
+    }
+
+    function printInvoice(data) {
+      const printArea = document.getElementById('printable-area');
+      
+      let html = `
+        <div class="print-header">
+           <img src="https://i.imgur.com/d90GjXz.png" class="print-logo">
+           <div class="text-end">
+              <div class="print-title">${data.type}</div>
+              <div class="print-meta">
+                 ID: ${data.invoiceId}<br>
+                 Date: ${data.issueDate}
+              </div>
+           </div>
+        </div>
+
+        <div class="print-customer">
+           <strong>Bill To:</strong><br>
+           ${data.customerName}<br>
+           ${data.customerPhone}
+        </div>
+      `;
+
+      data.events.forEach(evt => {
+        html += `
+          <div style="margin-bottom: 25px;">
+             <strong>Event: ${evt.eventName}</strong> <span style="color:#666; font-size:0.9em; margin-left:10px;">(${evt.eventDate})</span>
+             <table class="print-table">
+               <thead><tr><th>Description</th><th style="text-align:right;">Amount</th></tr></thead>
+               <tbody>
+        `;
+        evt.items.forEach(item => {
+           const p = parseFloat(item.price).toLocaleString('en-IN', {minimumFractionDigits: 2});
+           html += `<tr><td>${item.name}</td><td style="text-align:right;">₹${p}</td></tr>`;
+        });
+        html += `</tbody></table></div>`;
+      });
+
+      html += `
+        <div class="print-total">
+           Total: ₹${data.grandTotal}
+        </div>
+        <div class="print-footer">
+           Thank you for choosing Pranima Event Management!<br>
+           This is a computer generated document.
+        </div>
+      `;
+
+      printArea.innerHTML = html;
+      
+      // Delay to allow rendering before print dialog
+      setTimeout(() => {
+        window.print();
+      }, 500);
+    }
+
+
+    // --- HISTORY LOGIC ---
+
+    function loadHistory() {
+      const tbody = document.getElementById('historyBody');
+      tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Loading records...</td></tr>';
+      
+      google.script.run.withSuccessHandler(renderHistory).getHistoryData();
+    }
+
+    function renderHistory(data) {
+      historyCache = data;
+      const tbody = document.getElementById('historyBody');
+      tbody.innerHTML = '';
+      
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">No history found.</td></tr>';
+        return;
+      }
+
+      data.forEach(row => {
+         const dateFormatted = new Date(row.date).toLocaleDateString('en-IN');
+         const tr = document.createElement('tr');
+         tr.innerHTML = `
+           <td>${dateFormatted}</td>
+           <td>
+             <strong>${row.name}</strong><br>
+             <span class="text-muted small">${row.type} | ${row.id}</span>
+           </td>
+           <td class="fw-bold">₹${row.total}</td>
+           <td class="text-end">
+              <button class="btn btn-sm btn-outline-dark me-1" onclick='reprintHistory("${row.id}")'><i class="bi bi-printer"></i></button>
+              <button class="btn btn-sm btn-outline-danger" onclick='deleteHistory("${row.id}")'><i class="bi bi-trash"></i></button>
+           </td>
+         `;
+         tbody.appendChild(tr);
+      });
+    }
+
+    function reprintHistory(id) {
+      const record = historyCache.find(r => r.id === id);
+      if (record) {
+        const data = JSON.parse(record.jsonData);
+        data.invoiceId = id; // Ensure ID is persistent
+        printInvoice(data);
+      }
+    }
+
+    function deleteHistory(id) {
+      if(!confirm("Are you sure you want to permanently delete record " + id + "?")) return;
+      
+      showToast("Deleting...", "default");
+      
+      google.script.run
+        .withSuccessHandler(() => {
+           showToast("Record Deleted");
+           loadHistory(); // Refresh table
+        })
+        .withFailureHandler((err) => {
+           showToast("Delete Failed: " + err.message, "error");
+        })
+        .deleteItem(id);
+    }
+
+    function filterHistory() {
+       const term = document.getElementById('searchInput').value.toLowerCase();
+       const rows = document.querySelectorAll('#historyBody tr');
+       rows.forEach(row => {
+          const text = row.innerText.toLowerCase();
+          row.style.display = text.includes(term) ? '' : 'none';
+       });
+    }
+
+  </script>
+</body>
+</html>
