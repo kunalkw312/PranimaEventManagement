@@ -4,210 +4,213 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pranima Management</title>
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#000000">
-  <link rel="apple-touch-icon" href="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg">
   
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#111111">
+  <link rel="apple-touch-icon" href="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg">
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
   <style>
-    /* --- MINIMALIST BLACK & WHITE THEME --- */
-    body { font-family: 'Inter', sans-serif; background-color: #ffffff; color: #000; padding-bottom: 80px; }
-    
-    /* Typography */
-    .brand-font { font-family: 'Playfair Display', serif; letter-spacing: 0.5px; }
-    h5, label { color: #000; font-weight: 600; }
-    
-    /* Layout */
-    .main-container { max-width: 850px; margin: 20px auto; padding: 20px; }
-
-    /* Forms */
-    .form-control, .form-select { 
-      border: 1px solid #000; /* Black borders */
-      border-radius: 0; /* Sharp corners for clean look */
-      padding: 10px; 
-      color: #000;
+    /* --- RESTORED ORIGINAL THEME --- */
+    :root { 
+      --primary: #111; 
+      --secondary: #666; 
+      --bg-color: #f4f6f8; 
+      --card-bg: #ffffff;
+      --border-color: #eee;
     }
-    .form-control:focus, .form-select:focus { 
-      box-shadow: none; 
-      border-color: #000; 
-      background-color: #f9f9f9;
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--primary); padding-bottom: 60px; }
+    
+    h1, h2, h3, h4 { font-weight: 700; color: var(--primary); }
+    .brand-font { font-family: 'Playfair Display', serif; letter-spacing: 1px; }
+    
+    .main-container { 
+      max-width: 950px; 
+      margin: 40px auto; 
+      background: var(--card-bg); 
+      border-radius: 16px; 
+      box-shadow: 0 10px 40px rgba(0,0,0,0.04); 
+      padding: 40px; 
     }
 
-    /* Tabs */
-    .nav-pills .nav-link { color: #666; font-weight: 600; border-radius: 0; }
-    .nav-pills .nav-link.active { background-color: #000; color: #fff; }
+    .nav-pills .nav-link { color: var(--secondary); border-radius: 8px; font-weight: 500; padding: 12px; }
+    .nav-pills .nav-link.active { background-color: var(--primary); color: #fff; }
 
-    /* Buttons */
-    .btn { border-radius: 0; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; }
-    .btn-dark { background-color: #000; border: 1px solid #000; }
-    .btn-outline-dark { border: 1px solid #000; color: #000; }
-    .btn-outline-dark:hover { background-color: #000; color: #fff; }
+    .form-control, .form-select { border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
+    .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
 
-    /* --- EVENT BLOCKS (The Fix) --- */
+    /* --- EVENT BLOCKS (Fixed Overlap Issue) --- */
     .event-block { 
-      border-top: 2px solid #000; 
-      margin-bottom: 30px; 
-      padding-top: 20px; 
+      background: #fafafa; 
+      border: 1px solid #eee; 
+      border-radius: 12px; 
+      padding: 25px; 
+      margin-bottom: 25px; 
       position: relative; 
+      padding-top: 50px; /* Added extra space at top for the Delete Icon */
     }
-    
-    /* Colored Icons as requested */
-    .btn-delete-event {
-      position: absolute;
-      top: -15px;
-      right: 0;
-      background: #fff;
-      color: #dc3545; /* RED */
-      border: 1px solid #dc3545;
-      padding: 5px 10px;
-      font-size: 0.9rem;
-      cursor: pointer;
+    .delete-event-btn { 
+      position: absolute; 
+      top: 15px; 
+      right: 15px; 
+      color: #dc3545; 
+      border: 1px solid #eee;
+      background: #fff; 
+      width: 35px; height: 35px;
+      border-radius: 50%;
+      font-size: 1rem; 
+      cursor: pointer; 
+      display: flex; align-items: center; justify-content: center;
+      transition: 0.2s;
     }
-    .btn-delete-event:hover { background: #dc3545; color: #fff; }
+    .delete-event-btn:hover { background: #dc3545; color: white; border-color: #dc3545; }
 
+    /* Equipment Rows */
     .equipment-row { 
       display: flex; 
       align-items: center; 
       gap: 10px; 
-      margin-bottom: 10px; 
+      margin-bottom: 12px; 
+      padding-bottom: 12px; 
+      border-bottom: 1px dashed #eee; 
     }
+    .equipment-row:last-child { border-bottom: none; }
     .btn-remove-item {
-      color: #dc3545; /* RED */
-      border: 1px solid #eee;
-      background: #fff;
-      width: 40px; height: 40px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      font-size: 1.2rem;
+       border: none; background: transparent; color: #dc3545; opacity: 0.6;
     }
-    .btn-remove-item:hover { background: #ffeeee; }
+    .btn-remove-item:hover { opacity: 1; }
 
-    /* History */
-    .history-item { border-bottom: 1px solid #eee; padding: 15px 0; }
-    .history-item:last-child { border-bottom: none; }
+    /* --- HISTORY CARDS --- */
+    .history-card {
+       background: #fff;
+       border: 1px solid #eee;
+       border-left: 5px solid #111;
+       padding: 20px;
+       margin-bottom: 15px;
+       border-radius: 8px;
+       transition: transform 0.2s;
+    }
+    .history-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .badge-paid { background: #e6f9ea; color: #15803d; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+    .badge-due { background: #fee2e2; color: #b91c1c; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
 
     /* Payment Box */
-    .payment-summary { background: #f4f4f4; padding: 20px; margin-top: 20px; border: 1px solid #000; }
+    .payment-summary { background: #f8f9fa; padding: 20px; border-radius: 12px; border: 1px solid #eee; }
 
-    /* UI Utilities */
     #installBtn { display: none; }
-    #toast-overlay { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; }
-    .custom-toast { background: #000; color: #fff; padding: 10px 20px; margin-bottom: 10px; display: none; }
-    .custom-toast.show { display: block; animation: fadeIn 0.3s; }
+    #toast-overlay { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 9999; pointer-events: none; }
+    .custom-toast { background: #111; color: #fff; padding: 12px 24px; border-radius: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); opacity: 0; transition: 0.3s; transform: translateY(20px); }
+    .custom-toast.show { opacity: 1; transform: translateY(0); }
+    .custom-toast.error { background: #dc3545; }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* --- PRINT STYLES --- */
+    /* --- PRINT CSS (Fixed Disclaimer & Maths) --- */
     #printable-area { display: none; }
     @media print {
-      @page { size: A4; margin: 0.5cm; }
-      body, html { background: #fff; margin: 0; padding: 0; width: 100%; }
+      @page { size: A4; margin: 0.8cm; }
+      body, html { height: 100%; width: 100%; margin: 0; background-color: white; }
       .main-container, .nav, .btn, #toast-overlay, #installContainer { display: none !important; }
       
       #printable-area { 
         display: block !important; 
         position: absolute; top: 0; left: 0; width: 100%; 
-        font-family: 'Inter', sans-serif; font-size: 11px; color: #000; 
+        font-family: 'Inter', sans-serif; font-size: 12px; color: #000; 
       }
       
-      .print-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
-      .print-logo { width: 90px; }
-      .print-title { font-family: 'Playfair Display'; font-weight: 700; font-size: 1.8rem; text-transform: uppercase; }
+      .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #000; padding-bottom: 15px; }
+      .print-logo { width: 100px; height: auto; }
+      .print-title { font-size: 2rem; font-family: 'Playfair Display'; font-weight: 700; text-transform: uppercase; margin: 0; }
+      .print-meta { text-align: right; font-size: 0.9rem; line-height: 1.4; }
       
-      .print-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-      .print-table th { border-bottom: 1px solid #000; text-align: left; padding: 4px; font-size: 0.85rem; background: #eee; -webkit-print-color-adjust: exact; }
-      .print-table td { border-bottom: 1px solid #eee; padding: 4px; }
+      .print-customer { margin-bottom: 25px; background: #f9f9f9; padding: 15px; border-radius: 6px; -webkit-print-color-adjust: exact; }
       
-      .totals-section { display: flex; justify-content: flex-end; margin-top: 10px; }
-      .totals-table { width: 250px; text-align: right; }
-      .grand-total { border-top: 2px solid #000; font-weight: 700; font-size: 1.1rem; padding-top: 5px; }
+      .event-section { margin-bottom: 20px; page-break-inside: avoid; }
+      .print-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 0.95rem; }
+      .print-table th { text-align: left; border-bottom: 1px solid #000; padding: 5px; font-weight: 700; background: #f0f0f0; -webkit-print-color-adjust: exact; }
+      .print-table td { padding: 5px; border-bottom: 1px solid #eee; }
       
-      .disclaimer { margin-top: 25px; font-size: 0.7rem; color: #555; text-align: justify; border-top: 1px solid #ccc; padding-top: 10px; }
-      .print-footer { text-align: center; margin-top: 10px; font-weight: 600; font-size: 0.8rem; }
+      .totals-area { display: flex; justify-content: flex-end; margin-top: 20px; }
+      .totals-table { width: 300px; text-align: right; font-size: 1rem; }
+      .totals-table td { padding: 4px 0; }
+      .row-grand { border-top: 2px solid #000; font-weight: 700; font-size: 1.2rem; padding-top: 8px; margin-top: 5px; }
+      
+      .disclaimer { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 10px; font-size: 0.75rem; color: #555; text-align: justify; }
+      .print-footer { margin-top: 20px; text-align: center; font-size: 0.8rem; font-weight: 600; color: #333; }
     }
   </style>
 </head>
 <body>
 
-  <div id="toast-overlay"><div id="toast-msg" class="custom-toast">Action Successful</div></div>
+  <div id="toast-overlay"><div id="toast-msg" class="custom-toast">Notification</div></div>
 
   <div class="main-container">
-    <div class="text-center mb-4">
-      <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" alt="Logo" style="height: 80px; margin-bottom: 10px;">
-      <h3 class="brand-font m-0">Pranima Event Management</h3>
-      <div id="installContainer" class="mt-3"><button id="installBtn" class="btn btn-outline-dark btn-sm">Install App</button></div>
+    <div class="text-center mb-5">
+      <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" alt="Logo" style="height: 100px; margin-bottom: 15px;">
+      <h2 class="brand-font">Pranima Event Management</h2>
+      <p class="text-muted">Invoice & Estimate Generator</p>
+      <div id="installContainer" class="mt-2"><button id="installBtn" class="btn btn-sm btn-outline-dark rounded-pill"><i class="bi bi-download me-1"></i> Install App</button></div>
     </div>
 
-    <ul class="nav nav-pills nav-fill mb-4">
-      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-generator">INVOICE</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-history" onclick="fetchHistory()">HISTORY</button></li>
+    <ul class="nav nav-pills nav-fill mb-4 gap-2">
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-generator"><i class="bi bi-file-earmark-plus me-2"></i>New Invoice</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-history" onclick="fetchHistory()"><i class="bi bi-clock-history me-2"></i>History</button></li>
     </ul>
 
     <div class="tab-content">
-      
       <div class="tab-pane fade show active" id="tab-generator">
         <form id="mainForm" onsubmit="event.preventDefault(); saveRecord();">
-          
-          <div class="row g-3 mb-3">
+          <div class="row g-4 mb-4">
             <div class="col-md-6">
-              <label>Customer Name</label>
-              <input type="text" class="form-control" id="custName" required>
+              <label class="form-label text-muted small fw-bold">Customer</label>
+              <input type="text" class="form-control mb-2" id="custName" placeholder="Full Name" required>
+              <input type="tel" class="form-control" id="custPhone" placeholder="Mobile Number" required>
             </div>
             <div class="col-md-6">
-              <label>Phone Number</label>
-              <input type="tel" class="form-control" id="custPhone" required>
+              <label class="form-label text-muted small fw-bold">Document</label>
+              <div class="d-flex gap-2 mb-2">
+                <select class="form-select" id="docType"><option value="Estimate">Estimate</option><option value="Invoice">Invoice</option></select>
+                <input type="date" class="form-control" id="docDate" required>
+              </div>
             </div>
-          </div>
-
-          <div class="row g-3 mb-4">
-             <div class="col-6">
-               <label>Type</label>
-               <select class="form-select" id="docType"><option value="Estimate">Estimate</option><option value="Invoice">Invoice</option></select>
-             </div>
-             <div class="col-6">
-               <label>Date</label>
-               <input type="date" class="form-control" id="docDate" required>
-             </div>
           </div>
 
           <div id="events-container"></div>
           
-          <button type="button" class="btn btn-outline-dark w-100 py-2 mb-4" onclick="addEventBlock()">
-             + ADD ANOTHER EVENT
+          <button type="button" class="btn btn-outline-dark w-100 py-3 mb-4" style="border-style: dashed;" onclick="addEventBlock()">
+             <i class="bi bi-plus-circle me-1"></i> Add Another Event
           </button>
 
-          <div class="payment-summary">
+          <div class="payment-summary mb-4">
              <div class="d-flex justify-content-between mb-2">
-                <span>Total Amount:</span>
+                <span class="text-muted">Total Amount</span>
                 <span class="fw-bold fs-5">₹<span id="displayTotal">0.00</span></span>
              </div>
-             <div class="d-flex justify-content-between align-items-center mb-2">
-                <span>Advance Paid:</span>
-                <input type="number" id="advanceAmt" class="form-control text-end" style="width: 120px; border: 1px solid #999;" placeholder="0" oninput="calculateTotal()">
+             <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Advance Payment</span>
+                <input type="number" id="advanceAmt" class="form-control text-end" style="width: 140px;" placeholder="0" oninput="calculateTotal()">
              </div>
-             <div class="d-flex justify-content-between pt-2 border-top border-dark">
-                <span class="fw-bold">Balance Due:</span>
-                <span class="fw-bold fs-5 text-danger">₹<span id="displayRemaining">0.00</span></span>
+             <div class="d-flex justify-content-between pt-3 border-top">
+                <span class="fw-bold">Remaining Balance</span>
+                <span class="fw-bold fs-4 text-danger">₹<span id="displayRemaining">0.00</span></span>
              </div>
           </div>
 
-          <div class="d-flex gap-2 mt-4">
-             <button type="button" class="btn btn-outline-dark flex-grow-1" onclick="generatePreview(true)">PREVIEW</button>
-             <button type="submit" class="btn btn-dark flex-grow-1"><span id="saveBtnText">SAVE & PRINT</span></button>
+          <div class="d-flex justify-content-end gap-3">
+             <button type="button" class="btn btn-lg btn-secondary" onclick="generatePreview(true)">Print Preview</button>
+             <button type="submit" class="btn btn-lg btn-dark px-5"><span id="saveBtnText">Save & Print</span><span id="saveSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span></button>
           </div>
         </form>
       </div>
 
       <div class="tab-pane fade" id="tab-history">
-        <div class="d-flex mb-4">
-           <input type="text" id="searchInput" class="form-control" placeholder="Search invoices..." onkeyup="filterHistory()">
-           <button class="btn btn-dark ms-2" onclick="fetchHistory()"><i class="bi bi-arrow-clockwise"></i></button>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <input type="text" id="searchInput" class="form-control w-75" placeholder="Search..." onkeyup="filterHistory()">
+          <button class="btn btn-outline-secondary" onclick="fetchHistory()"><i class="bi bi-arrow-clockwise"></i></button>
         </div>
         <div id="historyList">
-           <div class="text-center py-5 text-muted">Tap refresh to load history</div>
+           <div class="text-center py-5 text-muted">Loading...</div>
         </div>
       </div>
     </div>
@@ -261,22 +264,16 @@
       div.className = 'event-block';
       div.id = `evt-${id}`;
       div.innerHTML = `
-        <button type="button" class="btn-delete-event" onclick="removeEl('evt-${id}')" title="Delete Event"><i class="bi bi-trash-fill"></i></button>
-        <div class="row g-2 mb-3">
-           <div class="col-8">
-             <label class="small text-muted">Event Name</label>
-             <input type="text" class="form-control fw-bold event-name" placeholder="e.g. Wedding" required>
-           </div>
-           <div class="col-4">
-             <label class="small text-muted">Date</label>
-             <input type="date" class="form-control event-date" required>
-           </div>
+        <button type="button" class="delete-event-btn" onclick="removeEl('evt-${id}')"><i class="bi bi-trash"></i></button>
+        <div class="row g-3 mb-3">
+           <div class="col-md-8"><label class="form-label text-muted small">Event Name</label><input type="text" class="form-control fw-bold event-name" placeholder="e.g. Wedding" required></div>
+           <div class="col-md-4"><label class="form-label text-muted small">Date</label><input type="date" class="form-control event-date" required></div>
         </div>
         <div class="items-list"></div>
-        <button type="button" class="btn btn-sm btn-link text-dark text-decoration-none p-0 mt-2" onclick="addItemRow(this)">+ ADD ITEM</button>
+        <button type="button" class="btn btn-sm btn-link text-decoration-none p-0 mt-3" onclick="addItemRow(this)">+ Add Item/Service</button>
       `;
       document.getElementById('events-container').appendChild(div);
-      addItemRow(div.querySelector('.btn-link')); // Auto add one item
+      addItemRow(div.querySelector('.btn-link'));
     }
 
     function addItemRow(btn) {
@@ -286,10 +283,10 @@
       div.className = 'equipment-row';
       div.id = `item-${id}`;
       div.innerHTML = `
-        <div style="flex: 2"><input type="text" class="form-control item-name" placeholder="Item Name"></div>
-        <div style="width: 70px"><input type="number" class="form-control qty-input text-center" value="1" oninput="calculateTotal()"></div>
-        <div style="width: 100px"><input type="number" class="form-control price-input text-end" placeholder="₹" oninput="calculateTotal()"></div>
-        <div class="btn-remove-item" onclick="removeEl('item-${id}')"><i class="bi bi-x-lg"></i></div>
+        <div style="flex: 2"><input type="text" class="form-control item-name" placeholder="Item Name" required></div>
+        <div style="width: 80px"><input type="number" class="form-control qty-input text-center" value="1" placeholder="Qty" oninput="calculateTotal()"></div>
+        <div style="width: 120px"><input type="number" class="form-control price-input text-end" placeholder="Price" oninput="calculateTotal()"></div>
+        <button type="button" class="btn-remove-item" onclick="removeEl('item-${id}')"><i class="bi bi-x-lg"></i></button>
       `;
       list.appendChild(div);
     }
@@ -326,20 +323,21 @@
       const form = document.getElementById('mainForm');
       if (!form.checkValidity()) { form.reportValidity(); return; }
       const btn = document.getElementById('saveBtnText');
-      btn.innerText = "SAVING...";
+      const spinner = document.getElementById('saveSpinner');
+      btn.innerText = "Saving..."; spinner.classList.remove('d-none');
       try {
         const data = getFormData();
         const res = await callApi({ action: 'SAVE', data: data });
-        btn.innerText = "SAVE & PRINT";
+        btn.innerText = "Save & Print"; spinner.classList.add('d-none');
         if (res.success) { showToast("Saved Successfully"); data.invoiceId = res.id; printInvoice(data); }
-        else { showToast("Error Saving"); }
-      } catch (err) { btn.innerText = "SAVE & PRINT"; showToast("Connection Error"); }
+        else { showToast("Error Saving", "error"); }
+      } catch (err) { btn.innerText = "Save & Print"; spinner.classList.add('d-none'); showToast("Connection Error", "error"); }
     }
 
     // History Logic
     async function fetchHistory() {
       const list = document.getElementById('historyList');
-      list.innerHTML = '<div class="text-center py-5 text-muted">Loading records...</div>';
+      list.innerHTML = '<div class="text-center py-5 text-muted">Loading...</div>';
       try {
         const data = await callApi({ action: 'GET_HISTORY' });
         historyCache = data;
@@ -358,22 +356,24 @@
           if(row.advance !== undefined) { rec.advance = row.advance; rec.remaining = row.remaining; }
 
           const div = document.createElement('div');
-          div.className = 'history-item';
+          div.className = 'history-card';
           div.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center">
-               <div>
-                  <div class="fw-bold fs-5">${row.name}</div>
-                  <div class="small text-muted">${row.id} • ${new Date(row.date).toLocaleDateString('en-IN')}</div>
-               </div>
-               <div class="text-end">
-                  <div class="fw-bold">₹${rec.grandTotal}</div>
-                  <div class="small ${rec.remaining > 0 ? 'text-danger' : 'text-success'}">Bal: ₹${rec.remaining}</div>
-               </div>
+            <div class="d-flex justify-content-between mb-2">
+               <span class="text-muted small">${new Date(row.date).toLocaleDateString('en-IN')}</span>
+               <span class="fw-bold">${row.id}</span>
             </div>
-            <div class="d-flex justify-content-end gap-2 mt-2">
-               <button class="btn btn-sm btn-outline-dark" onclick='updatePayment("${row.id}")'>UPDATE PAY</button>
-               <button class="btn btn-sm btn-outline-dark" onclick='reprintHistory("${row.id}")'><i class="bi bi-printer"></i></button>
-               <button class="btn btn-sm btn-outline-danger" onclick='deleteHistory("${row.id}")'><i class="bi bi-trash"></i></button>
+            <h5 class="mb-2">${row.name}</h5>
+            <div class="d-flex gap-2 mb-3">
+               <span class="badge-paid">Paid: ₹${rec.advance}</span>
+               <span class="badge-due">Bal: ₹${rec.remaining}</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+               <span class="fw-bold">₹${rec.grandTotal}</span>
+               <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-dark" onclick='updatePayment("${row.id}")'>Update Pay</button>
+                  <button class="btn btn-sm btn-outline-dark" onclick='reprintHistory("${row.id}")'><i class="bi bi-printer"></i></button>
+                  <button class="btn btn-sm btn-outline-danger" onclick='deleteHistory("${row.id}")'><i class="bi bi-trash"></i></button>
+               </div>
             </div>
           `;
           list.appendChild(div);
@@ -386,19 +386,19 @@
        showToast("Updating...");
        try {
          const res = await callApi({ action: 'UPDATE_PAYMENT', id: id, advance: newAdv });
-         if(res.success) { showToast("Updated"); fetchHistory(); } else { showToast("Error"); }
-       } catch(e) { showToast("Failed"); }
+         if(res.success) { showToast("Updated"); fetchHistory(); } else { showToast("Error", "error"); }
+       } catch(e) { showToast("Failed", "error"); }
     }
 
     async function deleteHistory(id) {
-       if(!confirm("Permanently delete " + id + "?")) return;
+       if(!confirm("Delete " + id + "?")) return;
        showToast("Deleting...");
        try { const res = await callApi({ action: 'DELETE', id: id }); if(res.success){ showToast("Deleted"); fetchHistory();} } catch(e){}
     }
     
     function reprintHistory(id) { const record = historyCache.find(r => r.id === id); if (record) { const data = JSON.parse(record.jsonData); data.invoiceId = id; printInvoice(data); } }
-    function filterHistory() { const term = document.getElementById('searchInput').value.toLowerCase(); const items = document.querySelectorAll('.history-item'); items.forEach(c => c.style.display = c.innerText.toLowerCase().includes(term) ? '' : 'none'); }
-    function showToast(msg) { const t=document.getElementById('toast-msg'); t.innerText=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+    function filterHistory() { const term = document.getElementById('searchInput').value.toLowerCase(); const cards = document.querySelectorAll('.history-card'); cards.forEach(c => c.style.display = c.innerText.toLowerCase().includes(term) ? '' : 'none'); }
+    function showToast(msg, type) { const t=document.getElementById('toast-msg'); t.innerText=msg; t.className=`custom-toast show ${type}`; setTimeout(()=>t.classList.remove('show'),3000); }
     function generatePreview() { const data = getFormData(); data.invoiceId = "PREVIEW"; printInvoice(data); }
 
     function printInvoice(data) {
@@ -421,8 +421,8 @@
 
       data.events.forEach(evt => {
         html += `
-          <div style="margin-bottom:15px; page-break-inside:avoid;">
-             <strong>${evt.eventName}</strong> <span style="color:#666; font-size:0.9em">(${evt.eventDate})</span>
+          <div class="event-section">
+             <strong>${evt.eventName}</strong> <span style="color:#555; font-size:0.9em">(${evt.eventDate})</span>
              <table class="print-table">
                <thead><tr><th width="50%">Item</th><th width="15%" class="text-center">Qty</th><th width="20%" class="text-end">Rate</th><th width="15%" class="text-end">Amt</th></tr></thead>
                <tbody>
@@ -437,11 +437,11 @@
       });
 
       html += `
-        <div class="totals-section">
+        <div class="totals-area">
            <table class="totals-table">
-              <tr><td>Total Amount:</td><td style="font-weight:600">₹${total.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
-              <tr><td>Advance Paid:</td><td>₹${adv.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
-              <tr><td class="grand-total">Balance Due:</td><td class="grand-total">₹${rem.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
+              <tr><td>Total:</td><td>₹${total.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
+              <tr><td>Advance:</td><td>₹${adv.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
+              <tr><td class="row-grand">Balance:</td><td class="row-grand">₹${rem.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
            </table>
         </div>
         <div class="disclaimer">
