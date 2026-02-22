@@ -145,13 +145,33 @@
 
           <div class="payment-summary mb-4">
              <div class="d-flex justify-content-between mb-2">
-                <span class="text-muted">Total Amount</span>
-                <span class="fw-bold fs-5">₹<span id="displayTotal">0.00</span></span>
+                <span class="text-muted">Subtotal Amount</span>
+                <span class="fw-bold fs-5">₹<span id="displaySubtotal">0.00</span></span>
              </div>
+
+             <div class="mb-3">
+                <button type="button" id="discountToggle" class="btn btn-sm btn-outline-secondary mb-2" onclick="toggleDiscount()">
+                    <i class="bi bi-tag-fill me-1"></i> Add Discount
+                </button>
+                <div id="discountInputGroup" class="d-none animate__animated animate__fadeIn">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted small">Discount Amount</span>
+                        <div class="input-group" style="width: 140px;">
+                            <span class="input-group-text bg-white">₹</span>
+                            <input type="number" id="discountAmt" class="form-control text-end" placeholder="0" oninput="calculateTotal()">
+                        </div>
+                    </div>
+                </div>
+             </div>
+
              <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted">Advance Payment</span>
-                <input type="number" id="advanceAmt" class="form-control text-end" style="width: 140px;" placeholder="0" oninput="calculateTotal()">
+                <div class="input-group" style="width: 140px;">
+                    <span class="input-group-text bg-white">₹</span>
+                    <input type="number" id="advanceAmt" class="form-control text-end" placeholder="0" oninput="calculateTotal()">
+                </div>
              </div>
+
              <div class="d-flex justify-content-between pt-3 border-top">
                 <span class="fw-bold">Remaining Balance</span>
                 <span class="fw-bold fs-4 text-danger">₹<span id="displayRemaining">0.00</span></span>
@@ -204,15 +224,11 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // ==========================================
-    // PASTE YOUR WEB APP URL HERE
-    // ==========================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzimQLhnbiV0IDut5yz6s9xlDY_jBl0X0e-yYQTAZE4LDpreE9y1ywLqOuCdKO-IXB9/exec"; 
-    // ==========================================
 
     let historyCache = [];
     let currentUpdateId = null; 
-    let editingId = null; // Tracks if we are editing an old record
+    let editingId = null; 
     
     const payModal = new bootstrap.Modal(document.getElementById('paymentModal'));
 
@@ -231,19 +247,42 @@
       return await response.json();
     }
 
+    // Toggle Discount Visibility
+    function toggleDiscount() {
+        const group = document.getElementById('discountInputGroup');
+        const btn = document.getElementById('discountToggle');
+        if(group.classList.contains('d-none')) {
+            group.classList.remove('d-none');
+            btn.innerHTML = '<i class="bi bi-x-circle me-1"></i> Remove Discount';
+            btn.classList.replace('btn-outline-secondary', 'btn-outline-danger');
+        } else {
+            group.classList.add('d-none');
+            document.getElementById('discountAmt').value = '';
+            btn.innerHTML = '<i class="bi bi-tag-fill me-1"></i> Add Discount';
+            btn.classList.replace('btn-outline-danger', 'btn-outline-secondary');
+            calculateTotal();
+        }
+    }
+
     // Calculations
     function calculateTotal() {
-      let total = 0;
+      let subtotal = 0;
       document.querySelectorAll('.equipment-row').forEach(row => {
          const qty = parseFloat(row.querySelector('.qty-input').value) || 1;
          const price = parseFloat(row.querySelector('.price-input').value) || 0;
-         total += (qty * price);
+         subtotal += (qty * price);
       });
+
+      const disc = parseFloat(document.getElementById('discountAmt').value) || 0;
       const adv = parseFloat(document.getElementById('advanceAmt').value) || 0;
-      const rem = total - adv;
-      document.getElementById('displayTotal').innerText = total.toLocaleString('en-IN', {minimumFractionDigits:2});
+      
+      const totalAfterDiscount = subtotal - disc;
+      const rem = totalAfterDiscount - adv;
+
+      document.getElementById('displaySubtotal').innerText = subtotal.toLocaleString('en-IN', {minimumFractionDigits:2});
       document.getElementById('displayRemaining').innerText = rem.toLocaleString('en-IN', {minimumFractionDigits:2});
-      return { total, adv, rem };
+      
+      return { subtotal, disc, totalAfterDiscount, adv, rem };
     }
 
     // Builder Functions
@@ -267,13 +306,11 @@
       if (data && data.items) {
          data.items.forEach(item => addItemRowToContainer(list, item));
       } else {
-         addItemRowToContainer(list); // Add one empty row
+         addItemRowToContainer(list);
       }
     }
 
-    function addItemRow(btn) {
-      addItemRowToContainer(btn.previousElementSibling);
-    }
+    function addItemRow(btn) { addItemRowToContainer(btn.previousElementSibling); }
 
     function addItemRowToContainer(container, itemData = null) {
       const id = Date.now() + Math.random();
@@ -298,7 +335,9 @@
         customerPhone: document.getElementById('custPhone').value,
         type: document.getElementById('docType').value,
         issueDate: document.getElementById('docDate').value,
-        grandTotal: nums.total.toLocaleString('en-IN', {minimumFractionDigits:2}),
+        subtotal: nums.subtotal,
+        discount: nums.disc,
+        grandTotal: nums.totalAfterDiscount,
         advance: nums.adv,
         remaining: nums.rem,
         events: []
@@ -317,50 +356,42 @@
       return data;
     }
 
-    // --- SAVE / EDIT LOGIC ---
     async function saveRecord() {
       const form = document.getElementById('mainForm');
       if (!form.checkValidity()) { form.reportValidity(); return; }
       
-      const btn = document.getElementById('saveBtnText');
+      const btnText = document.getElementById('saveBtnText');
       const spinner = document.getElementById('saveSpinner');
       
-      btn.innerText = editingId ? "Updating..." : "Saving..."; 
+      btnText.innerText = editingId ? "Updating..." : "Saving..."; 
       spinner.classList.remove('d-none');
       
       try {
         const data = getFormData();
         let res;
-        
         if (editingId) {
-           // EDIT MODE
-           data.invoiceId = editingId; // Keep same ID
+           data.invoiceId = editingId;
            res = await callApi({ action: 'UPDATE_FULL_RECORD', data: data });
         } else {
-           // NEW MODE
            res = await callApi({ action: 'SAVE', data: data });
         }
 
-        btn.innerText = "Save & Print"; 
+        btnText.innerText = "Save & Print"; 
         spinner.classList.add('d-none');
         
         if (res.success) { 
             showToast(editingId ? "Record Updated" : "Saved Successfully"); 
-            // If editing, keep ID; if new, use generated ID
             data.invoiceId = editingId ? editingId : res.id; 
             printInvoice(data);
-            
-            if(editingId) cancelEditMode(); // Reset form after edit
-        }
-        else { showToast("Error: " + res.error, "error"); }
+            if(editingId) cancelEditMode();
+        } else { showToast("Error: " + res.error, "error"); }
       } catch (err) { 
-        btn.innerText = "Save & Print"; 
+        btnText.innerText = "Save & Print"; 
         spinner.classList.add('d-none'); 
         showToast("Connection Error", "error"); 
       }
     }
 
-    // --- HISTORY LOGIC ---
     async function fetchHistory() {
       const list = document.getElementById('historyList');
       list.innerHTML = '<div class="text-center py-5 text-muted">Loading...</div>';
@@ -379,66 +410,58 @@
        data.forEach(row => {
           let rec = { advance: row.advance || 0, remaining: row.remaining || row.total, grandTotal: row.total };
           try { if(row.jsonData) rec = JSON.parse(row.jsonData); } catch(e){}
-          if(row.advance !== undefined) { rec.advance = row.advance; rec.remaining = row.remaining; }
-
           const div = document.createElement('div');
           div.className = 'history-card';
           div.innerHTML = `
             <div class="d-flex justify-content-between mb-2">
-               <span class="text-muted small">${new Date(row.date).toLocaleDateString('en-IN')}</span>
-               <span class="fw-bold">${row.id}</span>
+                <span class="text-muted small">${new Date(row.date).toLocaleDateString('en-IN')}</span>
+                <span class="fw-bold">${row.id}</span>
             </div>
             <h5 class="mb-2">${row.name}</h5>
             <div class="d-flex gap-2 mb-3">
-               <span class="badge-paid">Paid: ₹${rec.advance}</span>
-               <span class="badge-due">Bal: ₹${rec.remaining}</span>
+                <span class="badge-paid">Paid: ₹${rec.advance}</span>
+                <span class="badge-due">Bal: ₹${rec.remaining}</span>
             </div>
             <div class="d-flex justify-content-between align-items-center pt-2 border-top">
-               <span class="fw-bold">₹${rec.grandTotal}</span>
-               <div class="d-flex gap-2">
-                  <button class="btn btn-sm btn-outline-dark" onclick='startEditMode("${row.id}")' title="Edit Bill"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-dark" onclick='openPayModal("${row.id}", ${rec.advance})' title="Update Payment">Pay</button>
-                  <button class="btn btn-sm btn-outline-dark" onclick='reprintHistory("${row.id}")' title="Print"><i class="bi bi-printer"></i></button>
+                <span class="fw-bold">₹${rec.grandTotal}</span>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-dark" onclick='startEditMode("${row.id}")'><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-sm btn-outline-dark" onclick='openPayModal("${row.id}", ${rec.advance})'>Pay</button>
+                  <button class="btn btn-sm btn-outline-dark" onclick='reprintHistory("${row.id}")'><i class="bi bi-printer"></i></button>
                   <button class="btn btn-sm btn-outline-danger" onclick='deleteHistory("${row.id}")'><i class="bi bi-trash"></i></button>
-               </div>
+                </div>
             </div>
           `;
           list.appendChild(div);
        });
     }
 
-    // --- EDIT MODE LOGIC ---
     function startEditMode(id) {
        const record = historyCache.find(r => r.id === id);
        if(!record || !record.jsonData) return;
-       
        const data = JSON.parse(record.jsonData);
        
-       // Populate Fields
        document.getElementById('custName').value = data.customerName;
        document.getElementById('custPhone').value = data.customerPhone;
        document.getElementById('docType').value = data.type;
        document.getElementById('docDate').value = data.issueDate;
        document.getElementById('advanceAmt').value = data.advance;
        
-       // Clear and Populate Events
+       if(data.discount > 0) {
+           if(document.getElementById('discountInputGroup').classList.contains('d-none')) toggleDiscount();
+           document.getElementById('discountAmt').value = data.discount;
+       }
+
        const container = document.getElementById('events-container');
        container.innerHTML = '';
        data.events.forEach(evt => addEventBlock(evt));
        
        calculateTotal();
-       
-       // Set Edit State
        editingId = id;
        document.getElementById('editModeIndicator').classList.remove('d-none');
        document.getElementById('editIdDisplay').innerText = id;
        document.getElementById('saveBtnText').innerText = "Update Record";
-       
-       // Switch to Form Tab
-       const triggerEl = document.querySelector('#tab-gen-btn');
-       const tab = new bootstrap.Tab(triggerEl);
-       tab.show();
-       
+       new bootstrap.Tab(document.querySelector('#tab-gen-btn')).show();
        window.scrollTo(0, 0);
     }
 
@@ -446,15 +469,14 @@
        editingId = null;
        document.getElementById('mainForm').reset();
        document.getElementById('events-container').innerHTML = '';
-       addEventBlock(); // Add one empty
+       addEventBlock();
        document.getElementById('docDate').valueAsDate = new Date();
+       if(!document.getElementById('discountInputGroup').classList.contains('d-none')) toggleDiscount();
        calculateTotal();
-       
        document.getElementById('editModeIndicator').classList.add('d-none');
        document.getElementById('saveBtnText').innerText = "Save & Print";
     }
 
-    // --- PAYMENT MODAL ---
     function openPayModal(id, currentAdvance) {
        currentUpdateId = id;
        document.getElementById('modalAdvanceInput').value = currentAdvance;
@@ -465,29 +487,29 @@
        const newTotalAdvance = document.getElementById('modalAdvanceInput').value;
        if(!newTotalAdvance || currentUpdateId === null) return;
        payModal.hide();
-       showToast("Updating Payment...");
+       showToast("Updating...");
        try {
          const res = await callApi({ action: 'UPDATE_PAYMENT', id: currentUpdateId, newTotalAdvance: newTotalAdvance });
-         if(res.success) { showToast("Payment Updated!"); fetchHistory(); } else { showToast("Error", "error"); }
+         if(res.success) { showToast("Updated!"); fetchHistory(); }
        } catch(e) { showToast("Failed", "error"); }
     }
 
     async function deleteHistory(id) {
        if(!confirm("Delete " + id + "?")) return;
-       showToast("Deleting...");
        try { const res = await callApi({ action: 'DELETE', id: id }); if(res.success){ showToast("Deleted"); fetchHistory();} } catch(e){}
     }
     
     function reprintHistory(id) { const record = historyCache.find(r => r.id === id); if (record) { const data = JSON.parse(record.jsonData); data.invoiceId = id; printInvoice(data); } }
-    function filterHistory() { const term = document.getElementById('searchInput').value.toLowerCase(); const cards = document.querySelectorAll('.history-card'); cards.forEach(c => c.style.display = c.innerText.toLowerCase().includes(term) ? '' : 'none'); }
+    function filterHistory() { const term = document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('.history-card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(term) ? '' : 'none'); }
     function showToast(msg, type) { const t=document.getElementById('toast-msg'); t.innerText=msg; t.className=`custom-toast show ${type}`; setTimeout(()=>t.classList.remove('show'),3000); }
     function generatePreview() { const data = getFormData(); data.invoiceId = "PREVIEW"; printInvoice(data); }
 
     function printInvoice(data) {
       try {
         const area = document.getElementById('printable-area');
-        const totalStr = String(data.grandTotal).replace(/,/g,'');
-        const total = parseFloat(totalStr);
+        const subtotal = parseFloat(data.subtotal) || 0;
+        const discount = parseFloat(data.discount) || 0;
+        const total = parseFloat(data.grandTotal) || (subtotal - discount);
         const adv = parseFloat(data.advance) || 0;
         const rem = parseFloat(data.remaining) || (total - adv);
 
@@ -500,43 +522,33 @@
                 <span class="meta-label">DATE:</span>
                 <span class="meta-val">${new Date(data.issueDate).toLocaleDateString('en-IN')}</span>
              </div>
-
              <div class="header-center">
                 <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765783044/IMG-20251214-WA0000_2_a7xig7.jpg" class="print-logo" loading="eager">
                 <div class="company-name">Pranima Event Management</div>
              </div>
-
              <div class="header-right">
                 <div class="contact-name">Roshan Mate</div>
-                <div>+91 7030110422</div>
-                <div>+91 96371 07112</div>
-                <div>+91 85519 35834</div>
-                <div class="insta-box">
-                   <i class="bi bi-instagram"></i> @pranimaevents
-                </div>
+                <div>+91 7030110422 | +91 96371 07112</div>
+                <div class="insta-box"><i class="bi bi-instagram"></i> @pranimaevents</div>
              </div>
           </div>
-
           <div class="print-customer">
              <strong>Bill To:</strong><br>
-             <span style="font-size:1.1em">${data.customerName}</span><br>
-             ${data.customerPhone}
+             <span style="font-size:1.1em">${data.customerName}</span><br>${data.customerPhone}
           </div>
         `;
 
         data.events.forEach(evt => {
           html += `
             <div class="event-section">
-               <strong>${evt.eventName}</strong> <span style="color:#555; font-size:0.9em; margin-left:5px">(${new Date(evt.eventDate).toLocaleDateString('en-IN')})</span>
-               <table class="print-table">
-                 <thead><tr><th width="50%">Item Description</th><th width="15%" class="text-center">Qty</th><th width="20%" class="text-end">Rate</th><th width="15%" class="text-end">Amount</th></tr></thead>
-                 <tbody>
+                <strong>${evt.eventName}</strong> <span style="color:#555; font-size:0.9em; margin-left:5px">(${new Date(evt.eventDate).toLocaleDateString('en-IN')})</span>
+                <table class="print-table">
+                  <thead><tr><th width="50%">Item Description</th><th width="15%" class="text-center">Qty</th><th width="20%" class="text-end">Rate</th><th width="15%" class="text-end">Amount</th></tr></thead>
+                  <tbody>
           `;
           evt.items.forEach(item => {
-             const qty = parseFloat(item.qty);
-             const rate = parseFloat(item.price);
-             const amt = qty * rate;
-             html += `<tr><td>${item.name}</td><td class="text-center">${qty}</td><td class="text-end">${rate}</td><td class="text-end">${amt.toLocaleString('en-IN')}</td></tr>`;
+              const q = parseFloat(item.qty); const r = parseFloat(item.price);
+              html += `<tr><td>${item.name}</td><td class="text-center">${q}</td><td class="text-end">${r}</td><td class="text-end">${(q*r).toLocaleString('en-IN')}</td></tr>`;
           });
           html += `</tbody></table></div>`;
         });
@@ -544,35 +556,31 @@
         html += `
           <div class="footer-grid">
               <div class="qr-section">
-                 <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765809556/IMG-20251215-WA0003_3_byhvkw.jpg" class="qr-img" loading="eager">
+                 <img src="https://res.cloudinary.com/dowhvdkjh/image/upload/v1765809556/IMG-20251215-WA0003_3_byhvkw.jpg" class="qr-img">
                  <div class="qr-text">Scan to Pay</div>
               </div>
               <div class="totals-section">
                  <table class="totals-table">
-                    <tr><td>Total Amount:</td><td>₹${total.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
-                    <tr><td>Advance Paid:</td><td>₹${adv.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
+                    <tr><td>Subtotal:</td><td>₹${subtotal.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
+                    ${discount > 0 ? `<tr><td>Discount:</td><td>- ₹${discount.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>` : ''}
+                    <tr style="font-weight:bold"><td>Total:</td><td>₹${total.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
+                    <tr><td>Paid:</td><td>₹${adv.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
                     <tr><td class="grand-row">Balance Due:</td><td class="grand-row">₹${rem.toLocaleString('en-IN', {minimumFractionDigits:2})}</td></tr>
                  </table>
               </div>
           </div>
-
           <div class="terms">
-             <h6>Terms & Conditions</h6>
-             <ul>
-                <li><strong>Payment Schedule:</strong> 70% advance payment is required to confirm the booking. The remaining 30% must be paid on the day of the event.</li>
-                <li><strong>Technical & Weather Liability:</strong> We are not liable for any service interruptions or issues caused by technical failures, power outages, or adverse weather conditions beyond our control.</li>
-                <li><strong>Injury Disclaimer:</strong> We are not responsible for any injuries sustained by individuals due to improper interaction with our equipment.</li>
-                <li><strong>Cancellation Policy:</strong> Advance payments are strictly non-refundable in the event of cancellation by the customer.</li>
-                <li><strong>Equipment On-Site:</strong> Once equipment or items have reached the event venue, their cost is non-refundable, even if the order is subsequently cancelled.</li>
-             </ul>
+              <h6>Terms & Conditions</h6>
+              <ul>
+                <li><strong>Payment:</strong> 70% advance is required. 30% on event day.</li>
+                <li><strong>Cancellation:</strong> Advance payments are non-refundable.</li>
+                <li>Once equipment reaches venue, cost is non-refundable.</li>
+              </ul>
           </div>
-          <div class="print-footer">Thank you for choosing Pranima Event Management!</div>
         `;
         area.innerHTML = html;
-        setTimeout(() => window.print(), 1000); // 1 Second Delay for Images
-      } catch(e) {
-        alert("Print Error: " + e.message);
-      }
+        setTimeout(() => window.print(), 800);
+      } catch(e) { alert("Print Error: " + e.message); }
     }
   </script>
 </body>
