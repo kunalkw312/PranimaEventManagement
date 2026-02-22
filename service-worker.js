@@ -1,5 +1,5 @@
-// I bumped the version to v13 to force your new changes to load
-const CACHE_NAME = 'pranima-v13-user-updates'; 
+// I bumped the version to v19 to force your new changes to load
+const CACHE_NAME = 'pranima-v19-user-updates'; 
 
 const ASSETS = [
   './',
