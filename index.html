@@ -568,16 +568,21 @@
           </div>
           <div class="terms">
               <h6>Terms & Conditions</h6>
-              <ul>
-                <li><strong>Payment:</strong> 70% advance is required. 30% on event day.</li>
-                <li><strong>Cancellation:</strong> Advance payments are non-refundable.</li>
-                <li>Once equipment reaches venue, cost is non-refundable.</li>
-              </ul>
+             <ul>
+                <li><strong>Payment Schedule:</strong> 70% advance payment is required to confirm the booking. The remaining 30% must be paid on the day of the event.</li>
+                <li><strong>Technical & Weather Liability:</strong> We are not liable for any service interruptions or issues caused by technical failures, power outages, or adverse weather conditions beyond our control.</li>
+                <li><strong>Injury Disclaimer:</strong> We are not responsible for any injuries sustained by individuals due to improper interaction with our equipment.</li>
+                <li><strong>Cancellation Policy:</strong> Advance payments are strictly non-refundable in the event of cancellation by the customer.</li>
+                <li><strong>Equipment On-Site:</strong> Once equipment or items have reached the event venue, their cost is non-refundable, even if the order is subsequently cancelled.</li>
+             </ul>
           </div>
+          <div class="print-footer">Thank you for choosing Pranima Event Management!</div>
         `;
         area.innerHTML = html;
-        setTimeout(() => window.print(), 800);
-      } catch(e) { alert("Print Error: " + e.message); }
+        setTimeout(() => window.print(), 1000); // 1 Second Delay for Images
+      } catch(e) {
+        alert("Print Error: " + e.message);
+      }
     }
   </script>
 </body>
